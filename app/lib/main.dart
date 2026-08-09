@@ -13,15 +13,28 @@ import 'features/timeline/presentation/providers/timeline_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await NotificationService.initialize();
-  await PremiumService.initialize();
+  try {
+    await NotificationService.initialize();
+  } catch (e) {
+    debugPrint('[Main] NotificationService init failed: $e');
+  }
+
+  try {
+    await PremiumService.initialize();
+  } catch (e) {
+    debugPrint('[Main] PremiumService init failed: $e');
+  }
 
   // Supabase is only initialised when credentials are present (env.json filled).
   if (AppConfig.isConfigured) {
-    await Supabase.initialize(
-      url: AppConfig.supabaseUrl,
-      anonKey: AppConfig.supabaseAnonKey,
-    );
+    try {
+      await Supabase.initialize(
+        url: AppConfig.supabaseUrl,
+        anonKey: AppConfig.supabaseAnonKey,
+      );
+    } catch (e) {
+      debugPrint('[Main] Supabase init failed: $e');
+    }
   }
 
   runApp(const ProviderScope(child: DayfocusApp()));

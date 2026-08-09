@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 class PremiumService {
@@ -9,14 +10,22 @@ class PremiumService {
   static const monthlyProductId = 'dayfocus_premium_monthly';
   static const yearlyProductId = 'dayfocus_premium_yearly';
 
-  static bool get isConfigured => _apiKey.isNotEmpty;
+  static bool _initialized = false;
+
+  static bool get isConfigured => _apiKey.isNotEmpty && _initialized;
 
   static Future<void> initialize() async {
-    if (!isConfigured) return;
+    if (_apiKey.isEmpty) return;
 
-    await Purchases.configure(
-      PurchasesConfiguration(_apiKey)..appUserID = null,
-    );
+    try {
+      await Purchases.configure(
+        PurchasesConfiguration(_apiKey)..appUserID = null,
+      );
+      _initialized = true;
+    } catch (e) {
+      debugPrint('[PremiumService] Failed to initialize: $e');
+      _initialized = false;
+    }
   }
 
   static Future<void> login(String userId) async {
