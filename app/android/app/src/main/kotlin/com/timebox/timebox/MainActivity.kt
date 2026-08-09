@@ -1,0 +1,5 @@
+package com.timebox.timebox
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity : FlutterActivity()

@@ -1,0 +1,54 @@
+# Flutter/Dart
+.dart_tool/
+.packages
+build/
+*.iml
+.metadata
+pubspec.lock
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+
+# iOS
+app/ios/Pods/
+app/ios/.symlinks/
+app/ios/Flutter/Flutter.framework
+app/ios/Flutter/Flutter.podspec
+app/ios/Flutter/Generated.xcconfig
+app/ios/Flutter/app.flx
+app/ios/Flutter/engine
+app/ios/Flutter/flutter_assets/
+app/ios/ServiceDefinitions.json
+app/ios/Runner/GeneratedPluginRegistrant.*
+
+# Android
+app/android/.gradle/
+app/android/local.properties
+app/android/app/build/
+*.apk
+*.aab
+
+# Environment/secrets
+app/env.json
+*.p8
+*.plist
+client_secret_*.json
+
+# Generated code (can be regenerated with build_runner)
+*.g.dart
+
+# Test/coverage
+coverage/
+.test_coverage.dart
+
+# Misc
+*.log
+.claude/
