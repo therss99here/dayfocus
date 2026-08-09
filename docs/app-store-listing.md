@@ -63,7 +63,7 @@ Secondary: Lifestyle
 © 2026 Dayfocus
 
 ## Support URL
-https://github.com/YOUR_GITHUB/dayfocus/issues
+https://github.com/therss99here/dayfocus/issues
 
 ## Privacy Policy URL
-https://YOUR_GITHUB.github.io/dayfocus/privacy-policy
+https://therss99here.github.io/dayfocus/privacy-policy
