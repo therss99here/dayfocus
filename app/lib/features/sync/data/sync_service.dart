@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/config/app_config.dart';
 import '../../../core/database/app_database.dart';
@@ -14,12 +15,22 @@ class SyncService {
   bool get canSync => AppConfig.isConfigured && _userId != null;
 
   Future<void> syncAll() async {
-    if (!canSync) return;
-    await _syncDayConfigs();
-    await _syncPriorities();
-    await _syncTimeBlocks();
-    await _syncBrainDumpNotes();
-    await _syncUserSettings();
+    if (!canSync) {
+      debugPrint('[Sync] Cannot sync: configured=${AppConfig.isConfigured}, userId=$_userId');
+      return;
+    }
+    debugPrint('[Sync] Starting sync for user $_userId');
+    try {
+      await _syncDayConfigs();
+      await _syncPriorities();
+      await _syncTimeBlocks();
+      await _syncBrainDumpNotes();
+      await _syncUserSettings();
+      debugPrint('[Sync] Sync completed successfully');
+    } catch (e, st) {
+      debugPrint('[Sync] Error: $e\n$st');
+      rethrow;
+    }
   }
 
   // ── Day Configs ───────────────────────────────────────────────────────────

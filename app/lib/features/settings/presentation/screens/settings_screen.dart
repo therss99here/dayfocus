@@ -4,6 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../auth/presentation/widgets/auth_bottom_sheet.dart';
+import '../../../sync/presentation/providers/sync_provider.dart';
 import '../providers/notification_settings_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -57,6 +58,8 @@ class _SyncSection extends ConsumerWidget {
                 label: 'Signed in as',
                 value: user.email ?? user.id.substring(0, 8),
               ),
+              const _Divider(),
+              _SyncNowTile(),
               const _Divider(),
               _ActionTile(
                 title: 'Sign out',
@@ -382,5 +385,67 @@ class _Divider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Divider(height: 1, indent: AppSpacing.sm);
+  }
+}
+
+class _SyncNowTile extends ConsumerWidget {
+  const _SyncNowTile();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final syncState = ref.watch(syncNotifierProvider);
+
+    return InkWell(
+      onTap: syncState.isLoading
+          ? null
+          : () => ref.read(syncNotifierProvider.notifier).syncNow(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm, vertical: 13),
+        child: Row(
+          children: [
+            Icon(
+              syncState.isLoading ? Icons.sync : Icons.cloud_sync_outlined,
+              size: 18,
+              color: AppColors.accent,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    syncState.isLoading ? 'Syncing...' : 'Sync now',
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    syncState.hasError
+                        ? 'Sync failed - tap to retry'
+                        : 'Push and pull data from cloud',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: syncState.hasError
+                          ? AppColors.stateMissed
+                          : AppColors.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (syncState.isLoading)
+              const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            else
+              const Icon(Icons.chevron_right,
+                  size: 16, color: AppColors.textMuted),
+          ],
+        ),
+      ),
+    );
   }
 }

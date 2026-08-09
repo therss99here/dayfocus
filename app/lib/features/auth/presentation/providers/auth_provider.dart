@@ -81,9 +81,6 @@ class AuthNotifier extends _$AuthNotifier {
 
     final idToken = googleAuth.idToken;
     if (idToken == null) {
-      // idToken is null when serverClientId is not set on the Google Cloud OAuth
-      // client, or the web client ID doesn't match. Check Google Cloud Console:
-      // APIs & Services → Credentials → your Web client → Authorised origins.
       throw Exception(
         'Google did not return an ID token. '
         'Verify that GOOGLE_CLIENT_ID_WEB in env.json matches the '
@@ -92,15 +89,11 @@ class AuthNotifier extends _$AuthNotifier {
       );
     }
 
-    // iOS Google tokens often include a `nonce` claim; Supabase requires the
-    // same nonce to be sent when the claim is present.
-    final idTokenNonce = _nonceFromIdToken(idToken);
-
+    // Google Sign-In on iOS doesn't use nonce flow - just pass the token directly
     await _client.auth.signInWithIdToken(
       provider: OAuthProvider.google,
       idToken: idToken,
       accessToken: googleAuth.accessToken,
-      nonce: idTokenNonce,
     );
   }
 
@@ -123,22 +116,6 @@ class AuthNotifier extends _$AuthNotifier {
 
   String _sha256(String input) =>
       sha256.convert(utf8.encode(input)).toString();
-
-  /// Reads the optional `nonce` claim from a JWT id_token (Google / OIDC).
-  String? _nonceFromIdToken(String idToken) {
-    try {
-      final parts = idToken.split('.');
-      if (parts.length < 2) return null;
-      final payload = parts[1];
-      final normalized = base64Url.normalize(payload);
-      final decoded = utf8.decode(base64Url.decode(normalized));
-      final claims = jsonDecode(decoded) as Map<String, dynamic>;
-      final nonce = claims['nonce'];
-      return nonce is String && nonce.isNotEmpty ? nonce : null;
-    } catch (_) {
-      return null;
-    }
-  }
 }
 
 /// Convenience provider — null means signed out or still loading.
