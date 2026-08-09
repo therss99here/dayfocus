@@ -91,7 +91,7 @@ class _AuthBottomSheetState extends ConsumerState<AuthBottomSheet> {
 
           // Brand
           const Text(
-            '◆ dayfocus',
+            '◆ MyDayfocus',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,

@@ -158,7 +158,7 @@ class _AppHeader extends StatelessWidget {
       child: Row(
         children: [
           const Text(
-            '◆ timebox',
+            '◆ MyDayfocus',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,

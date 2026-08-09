@@ -69,7 +69,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                   style: TextStyle(fontSize: 40, color: AppColors.accent)),
               const SizedBox(height: AppSpacing.md),
               Text(
-                'Unlock Dayfocus\nPremium',
+                'Unlock MyDayfocus\nPremium',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displaySmall,
               ),

@@ -73,7 +73,7 @@ class _DayfocusAppState extends ConsumerState<DayfocusApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Dayfocus',
+      title: 'MyDayfocus',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),

@@ -154,7 +154,7 @@ class NotificationService {
     await _plugin.zonedSchedule(
       _morningReminderId,
       'Plan your day',
-      'Your timebox is ready. What are today\'s top 3 priorities?',
+      'Your day is ready. What are today\'s top 3 priorities?',
       _nextInstanceOfTime(time),
       _reminderDetails(),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
