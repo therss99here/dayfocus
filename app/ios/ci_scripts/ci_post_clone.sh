@@ -10,19 +10,13 @@ echo "Installing Flutter..."
 git clone https://github.com/flutter/flutter.git --depth 1 -b stable $HOME/flutter
 export PATH="$PATH:$HOME/flutter/bin"
 
-# Precache iOS artifacts FIRST (before any pod install happens)
-echo "Precaching iOS artifacts..."
-flutter precache --ios -v
-
-# Verify the framework exists
-echo "Checking for Flutter.xcframework..."
-ls -la $HOME/flutter/bin/cache/artifacts/engine/ios/ || echo "iOS engine directory not found"
-
-# Disable Swift Package Manager (experimental, causes issues in CI)
+# CRITICAL: Disable Swift Package Manager FIRST before any Flutter commands
+echo "Disabling Swift Package Manager..."
 flutter config --no-enable-swift-package-manager
 
-# Flutter doctor
-flutter doctor -v
+# Precache iOS artifacts
+echo "Precaching iOS artifacts..."
+flutter precache --ios
 
 # Navigate to app directory
 cd "$CI_PRIMARY_REPOSITORY_PATH/app"
@@ -39,13 +33,14 @@ cat > env.json << EOF
 }
 EOF
 
-# Get Flutter dependencies (this may run pod install)
+# Get Flutter dependencies
 echo "Getting Flutter dependencies..."
 flutter pub get
 
-# Build iOS to ensure everything is set up
-echo "Building iOS configuration..."
-flutter build ios --config-only --no-codesign --dart-define-from-file=env.json
+# Install pods manually (more reliable in CI)
+cd ios
+echo "Installing CocoaPods dependencies..."
+pod install
 
 echo "CI post-clone completed successfully"
 
