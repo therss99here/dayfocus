@@ -37,6 +37,10 @@ EOF
 echo "Getting Flutter dependencies..."
 flutter pub get
 
+# Run code generation (required for .g.dart files - Riverpod, Drift, etc.)
+echo "Running build_runner for code generation..."
+dart run build_runner build --delete-conflicting-outputs
+
 # Install pods manually (more reliable in CI)
 cd ios
 echo "Installing CocoaPods dependencies..."
