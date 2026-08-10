@@ -10,8 +10,16 @@ echo "Installing Flutter..."
 git clone https://github.com/flutter/flutter.git --depth 1 -b stable $HOME/flutter
 export PATH="$PATH:$HOME/flutter/bin"
 
+# Precache iOS artifacts FIRST (before any pod install happens)
+echo "Precaching iOS artifacts..."
+flutter precache --ios -v
+
+# Verify the framework exists
+echo "Checking for Flutter.xcframework..."
+ls -la $HOME/flutter/bin/cache/artifacts/engine/ios/ || echo "iOS engine directory not found"
+
 # Flutter doctor
-flutter doctor
+flutter doctor -v
 
 # Navigate to app directory
 cd "$CI_PRIMARY_REPOSITORY_PATH/app"
@@ -28,13 +36,13 @@ cat > env.json << EOF
 }
 EOF
 
-# Get Flutter dependencies
+# Get Flutter dependencies (this may run pod install)
 echo "Getting Flutter dependencies..."
 flutter pub get
 
-# Build iOS config to download all required artifacts
-echo "Setting up iOS build configuration..."
-flutter build ios --config-only --no-codesign
+# Build iOS to ensure everything is set up
+echo "Building iOS configuration..."
+flutter build ios --config-only --no-codesign --dart-define-from-file=env.json
 
 echo "CI post-clone completed successfully"
 
