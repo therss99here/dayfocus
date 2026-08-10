@@ -4,6 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../auth/presentation/widgets/auth_bottom_sheet.dart';
+import '../../../premium/presentation/screens/premium_screen.dart';
 import '../../../sync/presentation/providers/sync_provider.dart';
 import '../providers/notification_settings_provider.dart';
 
@@ -20,6 +21,8 @@ class SettingsScreen extends ConsumerWidget {
       body: ListView(
         children: const [
           SizedBox(height: AppSpacing.sm),
+          _PremiumSection(),
+          SizedBox(height: AppSpacing.md),
           _SyncSection(),
           SizedBox(height: AppSpacing.md),
           _NotificationsSection(),
@@ -28,6 +31,30 @@ class SettingsScreen extends ConsumerWidget {
           SizedBox(height: AppSpacing.lg),
         ],
       ),
+    );
+  }
+}
+
+// ── Premium ───────────────────────────────────────────────────────────────────
+
+class _PremiumSection extends StatelessWidget {
+  const _PremiumSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return _Section(
+      label: 'PREMIUM',
+      children: [
+        _ActionTile(
+          title: 'Upgrade to Premium',
+          subtitle: 'Unlimited priorities, time blocks & history',
+          icon: Icons.diamond_outlined,
+          iconColor: AppColors.accent,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const PremiumScreen()),
+          ),
+        ),
+      ],
     );
   }
 }
