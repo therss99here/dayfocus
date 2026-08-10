@@ -50,6 +50,10 @@ flutter pub get
 echo "Running build_runner for code generation..."
 dart run build_runner build --delete-conflicting-outputs
 
+# Generate iOS project files (creates AppFrameworkInfo.plist, etc.)
+echo "Generating iOS project files..."
+flutter build ios --config-only --no-codesign
+
 # Install pods manually (more reliable in CI)
 cd ios
 echo "Installing CocoaPods dependencies..."
