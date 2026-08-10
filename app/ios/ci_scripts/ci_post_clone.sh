@@ -32,13 +32,10 @@ EOF
 echo "Getting Flutter dependencies..."
 flutter pub get
 
-# Precache iOS artifacts (required before pod install)
-echo "Precaching iOS artifacts..."
-flutter precache --ios
+# Build iOS config to download all required artifacts
+echo "Setting up iOS build configuration..."
+flutter build ios --config-only --no-codesign
 
-# Navigate to iOS directory and install pods
-cd ios
-echo "Installing CocoaPods dependencies..."
-pod install
+echo "CI post-clone completed successfully"
 
 echo "CI post-clone completed successfully"
