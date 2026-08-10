@@ -1,28 +1,26 @@
 import 'package:flutter/foundation.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import '../../../core/config/app_config.dart';
 
 class PremiumService {
-  static const _apiKey = String.fromEnvironment(
-    'REVENUECAT_API_KEY',
-    defaultValue: '',
-  );
-
   static const monthlyProductId = 'dayfocus_premium_monthly';
   static const yearlyProductId = 'dayfocus_premium_yearly';
   static const entitlementId = 'dayfocus Pro';
 
   static bool _initialized = false;
 
-  static bool get isConfigured => _apiKey.isNotEmpty && _initialized;
+  static bool get isConfigured =>
+      AppConfig.revenuecatApiKey.isNotEmpty && _initialized;
 
   static Future<void> initialize() async {
-    if (_apiKey.isEmpty) return;
+    if (AppConfig.revenuecatApiKey.isEmpty) return;
 
     try {
       await Purchases.configure(
-        PurchasesConfiguration(_apiKey)..appUserID = null,
+        PurchasesConfiguration(AppConfig.revenuecatApiKey)..appUserID = null,
       );
       _initialized = true;
+      debugPrint('[PremiumService] Initialized successfully');
     } catch (e) {
       debugPrint('[PremiumService] Failed to initialize: $e');
       _initialized = false;
@@ -50,13 +48,20 @@ class PremiumService {
   }
 
   Future<List<StoreProduct>> getProducts() async {
-    if (!isConfigured) return [];
+    if (!isConfigured) {
+      debugPrint('[PremiumService] Not configured, returning empty products');
+      return [];
+    }
     try {
-      return await Purchases.getProducts(
+      debugPrint('[PremiumService] Fetching products...');
+      final products = await Purchases.getProducts(
         [monthlyProductId, yearlyProductId],
         productCategory: ProductCategory.subscription,
       );
-    } catch (_) {
+      debugPrint('[PremiumService] Got ${products.length} products');
+      return products;
+    } catch (e) {
+      debugPrint('[PremiumService] Error fetching products: $e');
       return [];
     }
   }
