@@ -32,6 +32,10 @@ EOF
 echo "Getting Flutter dependencies..."
 flutter pub get
 
+# Precache iOS artifacts (required before pod install)
+echo "Precaching iOS artifacts..."
+flutter precache --ios
+
 # Navigate to iOS directory and install pods
 cd ios
 echo "Installing CocoaPods dependencies..."
