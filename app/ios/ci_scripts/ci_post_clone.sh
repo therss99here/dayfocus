@@ -18,6 +18,9 @@ flutter precache --ios -v
 echo "Checking for Flutter.xcframework..."
 ls -la $HOME/flutter/bin/cache/artifacts/engine/ios/ || echo "iOS engine directory not found"
 
+# Disable Swift Package Manager (experimental, causes issues in CI)
+flutter config --no-enable-swift-package-manager
+
 # Flutter doctor
 flutter doctor -v
 
