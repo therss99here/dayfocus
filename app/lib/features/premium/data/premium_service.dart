@@ -9,6 +9,7 @@ class PremiumService {
 
   static const monthlyProductId = 'dayfocus_premium_monthly';
   static const yearlyProductId = 'dayfocus_premium_yearly';
+  static const entitlementId = 'dayfocus Pro';
 
   static bool _initialized = false;
 
@@ -42,7 +43,7 @@ class PremiumService {
     if (!isConfigured) return false;
     try {
       final info = await Purchases.getCustomerInfo();
-      return info.entitlements.active.containsKey('premium');
+      return info.entitlements.active.containsKey(entitlementId);
     } catch (_) {
       return false;
     }
@@ -65,7 +66,7 @@ class PremiumService {
     try {
       await Purchases.purchase(PurchaseParams.storeProduct(product));
       final info = await Purchases.getCustomerInfo();
-      return info.entitlements.active.containsKey('premium');
+      return info.entitlements.active.containsKey(entitlementId);
     } on PurchasesErrorCode catch (e) {
       if (e == PurchasesErrorCode.purchaseCancelledError) {
         return false;
@@ -78,7 +79,7 @@ class PremiumService {
     if (!isConfigured) return false;
     try {
       final info = await Purchases.restorePurchases();
-      return info.entitlements.active.containsKey('premium');
+      return info.entitlements.active.containsKey(entitlementId);
     } catch (_) {
       return false;
     }
