@@ -33,6 +33,15 @@ cat > env.json << EOF
 }
 EOF
 
+# Create env.dart (gitignored, contains secrets)
+echo "Creating env.dart from environment variables..."
+cat > lib/core/config/env.dart << EOF
+const supabaseUrl = '${SUPABASE_URL}';
+const supabaseAnonKey = '${SUPABASE_ANON_KEY}';
+const googleClientIdIos = '${GOOGLE_CLIENT_ID_IOS}';
+const googleClientIdWeb = '${GOOGLE_CLIENT_ID_WEB}';
+EOF
+
 # Get Flutter dependencies
 echo "Getting Flutter dependencies..."
 flutter pub get
