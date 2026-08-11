@@ -71,8 +71,13 @@ class PremiumService {
     try {
       await Purchases.purchase(PurchaseParams.storeProduct(product));
       final info = await Purchases.getCustomerInfo();
-      return info.entitlements.active.containsKey(entitlementId);
+      debugPrint('[PremiumService] Active entitlements: ${info.entitlements.active.keys.toList()}');
+      debugPrint('[PremiumService] Looking for: $entitlementId');
+      final hasPremium = info.entitlements.active.containsKey(entitlementId);
+      debugPrint('[PremiumService] Has premium: $hasPremium');
+      return hasPremium;
     } on PurchasesErrorCode catch (e) {
+      debugPrint('[PremiumService] Purchase error: $e');
       if (e == PurchasesErrorCode.purchaseCancelledError) {
         return false;
       }
