@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/providers/database_providers.dart';
 import '../../../../core/utils/date_utils.dart';
+import '../../../sync/presentation/providers/sync_provider.dart';
 import '../../../timeline/presentation/providers/active_day_provider.dart';
 import '../../data/priority_repository.dart';
 import '../../domain/entities/priority_entity.dart';
@@ -12,6 +13,10 @@ class PrioritiesNotifier extends _$PrioritiesNotifier {
   static const softLimit = 3;
 
   PriorityRepository get _repo => ref.read(priorityRepositoryProvider);
+
+  void _triggerSync() {
+    ref.read(syncNotifierProvider.notifier).syncOnDataChange();
+  }
 
   @override
   Stream<List<PriorityEntity>> build() async* {
@@ -39,21 +44,27 @@ class PrioritiesNotifier extends _$PrioritiesNotifier {
       title: t,
       sortOrder: maxOrder,
     );
+    _triggerSync();
   }
 
-  Future<void> remove(String id) => _repo.delete(id);
+  Future<void> remove(String id) async {
+    await _repo.delete(id);
+    _triggerSync();
+  }
 
   Future<void> toggleDone(String id) async {
     final current = state.valueOrNull ?? [];
     final p = current.where((p) => p.id == id).firstOrNull;
     if (p == null) return;
     await _repo.setDone(id, isDone: !p.isDone);
+    _triggerSync();
   }
 
   // Called from TimelineWidget when a block is toggled, keeping the linked priority in sync.
   // Caller must pass priorityId (block.priorityId), not the block's own id.
   Future<void> syncFromBlock(String priorityId, bool isDone) async {
     await _repo.setDone(priorityId, isDone: isDone);
+    _triggerSync();
   }
 
   Future<void> reorder(int oldIndex, int newIndex) async {
@@ -66,5 +77,6 @@ class PrioritiesNotifier extends _$PrioritiesNotifier {
       for (var i = 0; i < sorted.length; i++)
         _repo.updateSortOrder(sorted[i].id, i),
     ]);
+    _triggerSync();
   }
 }

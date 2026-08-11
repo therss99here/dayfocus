@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/providers/database_providers.dart';
 import '../../../../core/utils/date_utils.dart';
+import '../../../sync/presentation/providers/sync_provider.dart';
 import '../../data/time_block_repository.dart';
 import '../../domain/entities/time_block.dart';
 import 'active_day_provider.dart';
@@ -13,6 +14,10 @@ class TimelineNotifier extends _$TimelineNotifier {
   static const defaultEndHour = 18;
 
   TimeBlockRepository get _repo => ref.read(timeBlockRepositoryProvider);
+
+  void _triggerSync() {
+    ref.read(syncNotifierProvider.notifier).syncOnDataChange();
+  }
 
   @override
   Stream<List<TimeBlockEntity>> build() async* {
@@ -39,7 +44,7 @@ class TimelineNotifier extends _$TimelineNotifier {
     required int startMinute,
   }) async {
     final (endH, endM) = _nextSlot(startHour, startMinute);
-    return _repo.add(
+    final id = await _repo.add(
       dayConfigId: _dayId,
       title: title,
       startHour: startHour,
@@ -48,6 +53,8 @@ class TimelineNotifier extends _$TimelineNotifier {
       endMinute: endM,
       priorityId: priorityId,
     );
+    _triggerSync();
+    return id;
   }
 
   Future<void> addBlock({
@@ -64,6 +71,7 @@ class TimelineNotifier extends _$TimelineNotifier {
       endHour: endH,
       endMinute: endM,
     );
+    _triggerSync();
   }
 
   Future<void> resizeBlock(String id, int newEndHour, int newEndMinute) async {
@@ -74,6 +82,7 @@ class TimelineNotifier extends _$TimelineNotifier {
     if (endTotal < block.startTotalMinutes + 30) return;
     if (endTotal > defaultEndHour * 60) return;
     await _repo.updateTime(id, endHour: newEndHour, endMinute: newEndMinute);
+    _triggerSync();
   }
 
   Future<void> toggleComplete(String id) async {
@@ -84,9 +93,13 @@ class TimelineNotifier extends _$TimelineNotifier {
         ? TimeBlockStatus.scheduled
         : TimeBlockStatus.completed;
     await _repo.setStatus(id, newStatus);
+    _triggerSync();
   }
 
-  Future<void> removeBlock(String id) => _repo.delete(id);
+  Future<void> removeBlock(String id) async {
+    await _repo.delete(id);
+    _triggerSync();
+  }
 
   // Called from PriorityTile when a priority is toggled, keeping linked block in sync.
   Future<void> syncFromPriority(String priorityId, bool isDone) async {
@@ -97,6 +110,7 @@ class TimelineNotifier extends _$TimelineNotifier {
       block.id,
       isDone ? TimeBlockStatus.completed : TimeBlockStatus.scheduled,
     );
+    _triggerSync();
   }
 }
 

@@ -7,6 +7,7 @@ import 'core/providers/notification_providers.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/premium/data/premium_service.dart';
+import 'features/sync/presentation/providers/sync_provider.dart';
 import 'features/timeline/presentation/providers/active_day_provider.dart';
 import 'features/timeline/presentation/providers/timeline_provider.dart';
 
@@ -47,12 +48,14 @@ class DayfocusApp extends ConsumerStatefulWidget {
   ConsumerState<DayfocusApp> createState() => _DayfocusAppState();
 }
 
-class _DayfocusAppState extends ConsumerState<DayfocusApp> {
+class _DayfocusAppState extends ConsumerState<DayfocusApp>
+    with WidgetsBindingObserver {
   ProviderSubscription<AsyncValue<List>>? _blockSub;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(notificationServiceProvider).requestPermission();
       _blockSub = ref.listenManual(
@@ -60,7 +63,21 @@ class _DayfocusAppState extends ConsumerState<DayfocusApp> {
         (_, next) => _syncNotifications(next),
         fireImmediately: true,
       );
+
+      // Initial sync on app launch (if signed in)
+      if (AppConfig.isConfigured) {
+        ref.read(syncNotifierProvider.notifier).syncNow();
+      }
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      debugPrint('[Main] App resumed - triggering sync');
+      ref.read(syncNotifierProvider.notifier).syncOnResume();
+    }
   }
 
   void _syncNotifications(AsyncValue<dynamic> next) {
@@ -79,6 +96,7 @@ class _DayfocusAppState extends ConsumerState<DayfocusApp> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _blockSub?.close();
     super.dispose();
   }
