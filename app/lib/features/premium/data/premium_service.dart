@@ -69,13 +69,11 @@ class PremiumService {
   Future<bool> purchase(StoreProduct product) async {
     if (!isConfigured) return false;
     try {
-      await Purchases.purchase(PurchaseParams.storeProduct(product));
-      final info = await Purchases.getCustomerInfo();
-      debugPrint('[PremiumService] Active entitlements: ${info.entitlements.active.keys.toList()}');
-      debugPrint('[PremiumService] Looking for: $entitlementId');
-      final hasPremium = info.entitlements.active.containsKey(entitlementId);
-      debugPrint('[PremiumService] Has premium: $hasPremium');
-      return hasPremium;
+      final result = await Purchases.purchase(PurchaseParams.storeProduct(product));
+      debugPrint('[PremiumService] Purchase completed');
+      debugPrint('[PremiumService] Active entitlements: ${result.entitlements.active.keys.toList()}');
+      // Purchase succeeded - return true even if entitlement sync is delayed
+      return true;
     } on PurchasesErrorCode catch (e) {
       debugPrint('[PremiumService] Purchase error: $e');
       if (e == PurchasesErrorCode.purchaseCancelledError) {
