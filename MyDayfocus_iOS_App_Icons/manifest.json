@@ -1,0 +1,25 @@
+{
+  "app": "MyDayfocus",
+  "accent": "#F5A023",
+  "dark_background": "#0F0F12",
+  "masters": [
+    "symbol_only/MyDayfocus-symbol-1024x1024.png",
+    "symbol_plus_MDF/MyDayfocus-MDF-1024x1024.png"
+  ],
+  "generated_sizes": [
+    1024,
+    180,
+    167,
+    152,
+    120,
+    87,
+    80,
+    76,
+    60,
+    58,
+    40,
+    29,
+    20
+  ],
+  "note": "For iOS/Xcode, the 1024x1024 master is the primary App Store artwork. iOS applies its own icon mask."
+}
