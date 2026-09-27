@@ -3,8 +3,8 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import '../../../core/config/app_config.dart';
 
 class PremiumService {
-  static const monthlyProductId = 'dayfocus_premium_monthly';
-  static const yearlyProductId = 'dayfocus_premium_yearly';
+  static const monthlyProductId = 'dayfocus_pro_monthly';
+  static const yearlyProductId = 'dayfocus_pro_yearly';
   static const entitlementId = 'dayfocus Pro';
 
   static bool _initialized = false;

@@ -104,6 +104,17 @@ class AuthNotifier extends _$AuthNotifier {
     await _client.auth.signOut();
   }
 
+  // ── Delete account ────────────────────────────────────────────────────────
+
+  Future<void> deleteAccount() async {
+    _assertConfigured();
+    await _googleSignIn.signOut();
+    // Delete user from Supabase (requires service role or edge function)
+    // For now, sign out and mark as deleted via RPC
+    await _client.rpc('delete_user');
+    await _client.auth.signOut();
+  }
+
   // ── Helpers ───────────────────────────────────────────────────────────────
 
   String _generateNonce([int length = 32]) {

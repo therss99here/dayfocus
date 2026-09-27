@@ -2,7 +2,7 @@ name: dayfocus
 description: "Focus on what matters. Plan your day with intention."
 publish_to: 'none'
 
-version: 1.0.6+1
+version: 1.0.8+1
 
 environment:
   sdk: ^3.9.2
@@ -41,6 +41,7 @@ dependencies:
   intl: ^0.20.1
   shared_preferences: ^2.3.4
   uuid: ^4.5.1
+  url_launcher: ^6.2.5
 
   cupertino_icons: ^1.0.8
 
