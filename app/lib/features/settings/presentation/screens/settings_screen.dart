@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../../../core/config/app_config.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
@@ -189,11 +191,28 @@ class _NotificationsSection extends ConsumerWidget {
 class _AboutSection extends StatelessWidget {
   const _AboutSection();
 
+  Future<void> _openUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return _Section(
       label: 'ABOUT',
       children: [
+        _LinkTile(
+          title: 'Terms of Use',
+          onTap: () => _openUrl(AppConfig.termsOfUseUrl),
+        ),
+        const _Divider(),
+        _LinkTile(
+          title: 'Privacy Policy',
+          onTap: () => _openUrl(AppConfig.privacyPolicyUrl),
+        ),
+        const _Divider(),
         _InfoTile(label: 'Version', value: '1.0.0'),
       ],
     );
@@ -350,6 +369,33 @@ class _InfoTile extends StatelessWidget {
               style: const TextStyle(
                   fontSize: 14, color: AppColors.textMuted)),
         ],
+      ),
+    );
+  }
+}
+
+class _LinkTile extends StatelessWidget {
+  const _LinkTile({required this.title, required this.onTap});
+
+  final String title;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm, vertical: 14),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(title, style: const TextStyle(fontSize: 15)),
+            ),
+            const Icon(Icons.open_in_new,
+                size: 16, color: AppColors.textMuted),
+          ],
+        ),
       ),
     );
   }

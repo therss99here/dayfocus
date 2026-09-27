@@ -7,8 +7,8 @@ abstract class AppConfig {
   static const googleClientIdWeb = env.googleClientIdWeb;
   static const revenuecatApiKey = env.revenuecatApiKey;
 
-  static const privacyPolicyUrl = 'https://dayfocus.app/privacy';
-  static const termsOfUseUrl = 'https://dayfocus.app/terms';
+  static const privacyPolicyUrl = 'https://mydayfocus.com/privacy';
+  static const termsOfUseUrl = 'https://mydayfocus.com/terms';
 
   static bool get isConfigured =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
