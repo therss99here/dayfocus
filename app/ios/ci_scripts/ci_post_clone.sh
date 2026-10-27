@@ -40,7 +40,8 @@ const supabaseUrl = '${SUPABASE_URL}';
 const supabaseAnonKey = '${SUPABASE_ANON_KEY}';
 const googleClientIdIos = '${GOOGLE_CLIENT_ID_IOS}';
 const googleClientIdWeb = '${GOOGLE_CLIENT_ID_WEB}';
-const revenuecatApiKey = '${REVENUECAT_API_KEY}';
+const revenuecatApiKeyIos = '${REVENUECAT_API_KEY_IOS}';
+const revenuecatApiKeyAndroid = '${REVENUECAT_API_KEY_ANDROID}';
 EOF
 
 # Get Flutter dependencies
