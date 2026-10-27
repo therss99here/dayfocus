@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../brain_dump/presentation/providers/brain_dump_provider.dart';
 import '../../../priorities/presentation/widgets/priority_list.dart';
 import '../../../timeline/presentation/widgets/timeline_widget.dart';
 
@@ -205,14 +208,50 @@ class _SectionLabel extends StatelessWidget {
   }
 }
 
-class _BrainDump extends StatelessWidget {
+class _BrainDump extends ConsumerStatefulWidget {
   const _BrainDump();
 
   @override
+  ConsumerState<_BrainDump> createState() => _BrainDumpState();
+}
+
+class _BrainDumpState extends ConsumerState<_BrainDump> {
+  final _controller = TextEditingController();
+  Timer? _debounce;
+  String? _lastSyncedContent;
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (value != _lastSyncedContent) {
+        _lastSyncedContent = value;
+        ref.read(brainDumpNotifierProvider.notifier).save(value);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<String?>>(brainDumpNotifierProvider, (prev, next) {
+      final content = next.valueOrNull ?? '';
+      if (content != _controller.text && content != _lastSyncedContent) {
+        _controller.text = content;
+        _lastSyncedContent = content;
+      }
+    });
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
       child: TextField(
+        controller: _controller,
+        onChanged: _onChanged,
         maxLines: null,
         expands: true,
         style: const TextStyle(fontSize: 13, height: 1.6),

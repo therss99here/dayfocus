@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'daos/brain_dump_dao.dart';
 import 'daos/priority_dao.dart';
 import 'daos/time_block_dao.dart';
 
@@ -74,7 +75,7 @@ class UserSettings extends Table {
 
 @DriftDatabase(
   tables: [DayConfigs, Priorities, BrainDumpNotes, TimeBlocks, UserSettings],
-  daos: [PriorityDao, TimeBlockDao],
+  daos: [PriorityDao, TimeBlockDao, BrainDumpDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());

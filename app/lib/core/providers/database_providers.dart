@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use_from_same_package
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../database/app_database.dart';
+import '../../features/brain_dump/data/brain_dump_repository.dart';
 import '../../features/priorities/data/priority_repository.dart';
 import '../../features/timeline/data/time_block_repository.dart';
 
@@ -20,3 +21,7 @@ PriorityRepository priorityRepository(PriorityRepositoryRef ref) =>
 @Riverpod(keepAlive: true)
 TimeBlockRepository timeBlockRepository(TimeBlockRepositoryRef ref) =>
     TimeBlockRepository(ref.watch(appDatabaseProvider));
+
+@Riverpod(keepAlive: true)
+BrainDumpRepository brainDumpRepository(BrainDumpRepositoryRef ref) =>
+    BrainDumpRepository(ref.watch(appDatabaseProvider));
