@@ -88,17 +88,16 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> ensureDayConfig(String id, DateTime date) async {
-    final existing = await (select(dayConfigs)
-          ..where((d) => d.id.equals(id)))
-        .getSingleOrNull();
-    if (existing != null) return;
-    await into(dayConfigs).insert(DayConfigsCompanion.insert(
-      id: id,
-      date: date,
-      startHour: 9,
-      startMinute: 0,
-      endHour: 18,
-      endMinute: 0,
-    ));
+    await into(dayConfigs).insert(
+      DayConfigsCompanion.insert(
+        id: id,
+        date: date,
+        startHour: 9,
+        startMinute: 0,
+        endHour: 18,
+        endMinute: 0,
+      ),
+      mode: InsertMode.insertOrIgnore,
+    );
   }
 }
