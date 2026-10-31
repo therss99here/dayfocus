@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../brain_dump/presentation/widgets/brain_dump_widget.dart';
 import '../../../priorities/presentation/widgets/priority_list.dart';
 import '../../../timeline/presentation/widgets/timeline_widget.dart';
 
@@ -63,9 +64,15 @@ class _LeftPanel extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           child: PriorityList(),
         ),
+        const SizedBox(height: AppSpacing.sm),
         const Divider(height: 1),
         const _SectionLabel('BRAIN DUMP'),
-        const Expanded(child: _BrainDump()),
+        const Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+            child: BrainDumpWidget(),
+          ),
+        ),
       ],
     );
   }
@@ -111,7 +118,10 @@ class _BrainDumpExpansion extends StatelessWidget {
       children: const [
         SizedBox(
           height: 140,
-          child: _BrainDump(),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+            child: BrainDumpWidget(),
+          ),
         ),
       ],
     );
@@ -157,8 +167,17 @@ class _AppHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: Image.asset(
+              'assets/images/app_icon.png',
+              width: 24,
+              height: 24,
+            ),
+          ),
+          const SizedBox(width: 8),
           const Text(
-            '◆ MyDayfocus',
+            'MyDayfocus',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -205,27 +224,3 @@ class _SectionLabel extends StatelessWidget {
   }
 }
 
-class _BrainDump extends StatelessWidget {
-  const _BrainDump();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-      child: TextField(
-        maxLines: null,
-        expands: true,
-        style: const TextStyle(fontSize: 13, height: 1.6),
-        decoration: const InputDecoration(
-          hintText: 'Dump ideas, notes, anything...',
-          hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 13),
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          filled: false,
-          contentPadding: EdgeInsets.zero,
-        ),
-      ),
-    );
-  }
-}
