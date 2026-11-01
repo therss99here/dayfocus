@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../premium/domain/premium_limits.dart';
+import '../../../premium/presentation/providers/premium_provider.dart';
+import '../../../premium/presentation/widgets/premium_gate.dart';
 import '../../../priorities/presentation/providers/priorities_provider.dart';
 import '../../domain/entities/time_block.dart';
 import '../../domain/entities/time_slot.dart';
@@ -71,6 +74,11 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
     final notifier = ref.read(timelineNotifierProvider.notifier);
     final prioritiesNotifier = ref.read(prioritiesNotifierProvider.notifier);
     final timeAsync = ref.watch(currentTimeProvider);
+    final isPremium =
+        ref.watch(premiumNotifierProvider).valueOrNull ?? false;
+    final blockLimit = isPremium
+        ? PremiumLimits.premiumTimeBlocksPerDay
+        : PremiumLimits.freeTimeBlocksPerDay;
 
     return Column(
       children: [
@@ -95,6 +103,17 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
                           isOnHour: slot.isOnHour,
                           label: slot.label,
                           onDrop: (data) {
+                            if (!isPremium && blocks.length >= blockLimit) {
+                              showPremiumGate(
+                                context,
+                                title: 'Time block limit reached',
+                                message:
+                                    'Free users can add up to $blockLimit time '
+                                    'blocks per day. Upgrade to Premium for '
+                                    'unlimited time blocks.',
+                              );
+                              return;
+                            }
                             notifier.addBlockFromPriority(
                               priorityId: data.id,
                               title: data.title,
@@ -102,11 +121,24 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
                               startMinute: slot.minute,
                             );
                           },
-                          onCreate: (title) => notifier.addBlock(
-                            title: title,
-                            startHour: slot.hour,
-                            startMinute: slot.minute,
-                          ),
+                          onCreate: (title) {
+                            if (!isPremium && blocks.length >= blockLimit) {
+                              showPremiumGate(
+                                context,
+                                title: 'Time block limit reached',
+                                message:
+                                    'Free users can add up to $blockLimit time '
+                                    'blocks per day. Upgrade to Premium for '
+                                    'unlimited time blocks.',
+                              );
+                              return;
+                            }
+                            notifier.addBlock(
+                              title: title,
+                              startHour: slot.hour,
+                              startMinute: slot.minute,
+                            );
+                          },
                         ),
                     ],
                   ),
@@ -160,7 +192,10 @@ class _DayHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final activeDay = ref.watch(activeDayProvider);
     final notifier = ref.read(activeDayProvider.notifier);
+    final isPremium =
+        ref.watch(premiumNotifierProvider).valueOrNull ?? false;
     final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     final isToday = activeDay.year == now.year &&
         activeDay.month == now.month &&
         activeDay.day == now.day;
@@ -174,7 +209,24 @@ class _DayHeader extends ConsumerWidget {
         children: [
           _NavButton(
             icon: Icons.chevron_left,
-            onTap: notifier.previous,
+            onTap: () {
+              final previousDay =
+                  activeDay.subtract(const Duration(days: 1));
+              final daysBack = today.difference(previousDay).inDays;
+              if (!isPremium &&
+                  daysBack > PremiumLimits.freeHistoryDays) {
+                showPremiumGate(
+                  context,
+                  title: 'History limit reached',
+                  message:
+                      'Free users can access the last '
+                      '${PremiumLimits.freeHistoryDays} days. '
+                      'Upgrade to Premium for full history.',
+                );
+                return;
+              }
+              notifier.previous();
+            },
           ),
           Expanded(
             child: GestureDetector(

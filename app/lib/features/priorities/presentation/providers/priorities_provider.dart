@@ -10,8 +10,6 @@ part 'priorities_provider.g.dart';
 
 @riverpod
 class PrioritiesNotifier extends _$PrioritiesNotifier {
-  static const softLimit = 3;
-
   PriorityRepository get _repo => ref.read(priorityRepositoryProvider);
 
   void _triggerSync() {

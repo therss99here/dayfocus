@@ -348,7 +348,7 @@ class _FeatureList extends StatelessWidget {
           _FeatureRow(
             icon: Icons.schedule_rounded,
             title: 'Unlimited Time Blocks',
-            subtitle: 'Free: 5 per day',
+            subtitle: 'Free: 3 per day',
           ),
           SizedBox(height: AppSpacing.sm),
           _FeatureRow(

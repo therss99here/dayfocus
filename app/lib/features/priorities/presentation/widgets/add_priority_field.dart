@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../premium/domain/premium_limits.dart';
+import '../../../premium/presentation/providers/premium_provider.dart';
+import '../../../premium/presentation/widgets/premium_gate.dart';
 import '../providers/priorities_provider.dart';
 
 class AddPriorityField extends ConsumerStatefulWidget {
@@ -24,7 +27,20 @@ class _AddPriorityFieldState extends ConsumerState<AddPriorityField> {
     if (title.isEmpty) return;
 
     final count = ref.read(prioritiesNotifierProvider).valueOrNull?.length ?? 0;
-    if (count >= PrioritiesNotifier.softLimit) {
+    final isPremium =
+        ref.read(premiumNotifierProvider).valueOrNull ?? false;
+
+    if (count >= PremiumLimits.freePrioritiesPerDay) {
+      if (!isPremium) {
+        showPremiumGate(
+          context,
+          title: 'Priority limit reached',
+          message:
+              'Free users can add up to ${PremiumLimits.freePrioritiesPerDay} '
+              'priorities per day. Upgrade to Premium for unlimited priorities.',
+        );
+        return;
+      }
       _showLimitWarning(title);
     } else {
       _doAdd(title);

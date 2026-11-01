@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../auth/presentation/widgets/auth_bottom_sheet.dart';
+import '../../../premium/presentation/providers/premium_provider.dart';
 import '../../../premium/presentation/screens/premium_screen.dart';
 import '../../../sync/presentation/providers/sync_provider.dart';
 import '../providers/notification_settings_provider.dart';
@@ -39,23 +40,29 @@ class SettingsScreen extends ConsumerWidget {
 
 // ── Premium ───────────────────────────────────────────────────────────────────
 
-class _PremiumSection extends StatelessWidget {
+class _PremiumSection extends ConsumerWidget {
   const _PremiumSection();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isPremium =
+        ref.watch(premiumNotifierProvider).valueOrNull ?? false;
+
     return _Section(
       label: 'PREMIUM',
       children: [
-        _ActionTile(
-          title: 'Upgrade to Premium',
-          subtitle: 'Unlimited priorities, time blocks & history',
-          icon: Icons.diamond_outlined,
-          iconColor: AppColors.accent,
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const PremiumScreen()),
+        if (isPremium)
+          const _InfoTile(label: 'Dayfocus Pro', value: 'Active')
+        else
+          _ActionTile(
+            title: 'Upgrade to Premium',
+            subtitle: 'Unlimited priorities, time blocks & history',
+            icon: Icons.diamond_outlined,
+            iconColor: AppColors.accent,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const PremiumScreen()),
+            ),
           ),
-        ),
       ],
     );
   }
