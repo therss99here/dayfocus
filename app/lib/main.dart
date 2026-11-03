@@ -10,6 +10,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/analytics/data/analytics_service.dart';
 import 'features/analytics/data/review_service.dart';
+import 'features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'features/premium/data/premium_service.dart';
 import 'features/priorities/presentation/providers/priorities_provider.dart';
 import 'features/sync/presentation/providers/sync_provider.dart';
@@ -49,11 +50,15 @@ void main() async {
     }
   }
 
-  runApp(const ProviderScope(child: DayfocusApp()));
+  final showOnboarding = !await isOnboardingCompleted();
+
+  runApp(ProviderScope(child: DayfocusApp(showOnboarding: showOnboarding)));
 }
 
 class DayfocusApp extends ConsumerStatefulWidget {
-  const DayfocusApp({super.key});
+  const DayfocusApp({super.key, required this.showOnboarding});
+
+  final bool showOnboarding;
 
   @override
   ConsumerState<DayfocusApp> createState() => _DayfocusAppState();
@@ -138,7 +143,7 @@ class _DayfocusAppState extends ConsumerState<DayfocusApp>
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,
-      routerConfig: appRouter,
+      routerConfig: buildRouter(showOnboarding: widget.showOnboarding),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,

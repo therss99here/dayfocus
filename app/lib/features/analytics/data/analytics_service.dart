@@ -64,4 +64,10 @@ class AnalyticsService {
       _track('purchase_completed', {'product_id': productId});
 
   static void trackPurchaseCancelled() => _track('purchase_cancelled');
+
+  static void trackOnboardingCompleted({required int page}) =>
+      _track('onboarding_completed', {'page': page});
+
+  static void trackOnboardingSkipped({required int page}) =>
+      _track('onboarding_skipped', {'page': page});
 }

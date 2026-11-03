@@ -14,7 +14,7 @@ import 'package:dayfocus/main.dart';
 void main() {
   testWidgets('App smoke test', (WidgetTester tester) async {
     await tester.pumpWidget(
-      const ProviderScope(child: DayfocusApp()),
+      const ProviderScope(child: DayfocusApp(showOnboarding: false)),
     );
     expect(find.byType(MaterialApp), findsNothing);
     expect(find.byType(Router), findsOneWidget);
