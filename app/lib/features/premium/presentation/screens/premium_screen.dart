@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/config/app_config.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../analytics/data/analytics_service.dart';
 import '../providers/premium_provider.dart';
 
 class PremiumScreen extends ConsumerStatefulWidget {
@@ -18,12 +19,19 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
   bool _loading = false;
   String? _selectedPlanId;
 
+  @override
+  void initState() {
+    super.initState();
+    AnalyticsService.trackPaywallViewed(source: 'premium_screen');
+  }
+
   Future<void> _purchase(StoreProduct product) async {
     setState(() => _loading = true);
     try {
       final success =
           await ref.read(premiumNotifierProvider.notifier).purchase(product);
       if (success && mounted) {
+        AnalyticsService.trackPurchaseCompleted(productId: product.identifier);
         await _showSuccessDialog();
         if (mounted) Navigator.of(context).pop(true);
       }

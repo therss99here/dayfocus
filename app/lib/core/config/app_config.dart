@@ -6,6 +6,7 @@ abstract class AppConfig {
   static const googleClientIdIos = env.googleClientIdIos;
   static const googleClientIdWeb = env.googleClientIdWeb;
   static const revenuecatApiKey = env.revenuecatApiKey;
+  static const posthogApiKey = env.posthogApiKey;
 
   static const privacyPolicyUrl = 'https://mydayfocus.com/privacy';
   static const termsOfUseUrl = 'https://mydayfocus.com/terms';

@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/providers/database_providers.dart';
 import '../../../../core/utils/date_utils.dart';
+import '../../../analytics/data/analytics_service.dart';
 import '../../../sync/presentation/providers/sync_provider.dart';
 import '../../data/time_block_repository.dart';
 import '../../domain/entities/time_block.dart';
@@ -53,6 +54,7 @@ class TimelineNotifier extends _$TimelineNotifier {
       endMinute: endM,
       priorityId: priorityId,
     );
+    AnalyticsService.trackTimeBlockCreated();
     _triggerSync();
     return id;
   }
@@ -71,6 +73,7 @@ class TimelineNotifier extends _$TimelineNotifier {
       endHour: endH,
       endMinute: endM,
     );
+    AnalyticsService.trackTimeBlockCreated();
     _triggerSync();
   }
 
@@ -93,6 +96,9 @@ class TimelineNotifier extends _$TimelineNotifier {
         ? TimeBlockStatus.scheduled
         : TimeBlockStatus.completed;
     await _repo.setStatus(id, newStatus);
+    if (newStatus == TimeBlockStatus.completed) {
+      AnalyticsService.trackTimeBlockCompleted();
+    }
     _triggerSync();
   }
 

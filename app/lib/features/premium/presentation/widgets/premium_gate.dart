@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../analytics/data/analytics_service.dart';
 import '../screens/premium_screen.dart';
 
 Future<void> showPremiumGate(
@@ -8,6 +9,7 @@ Future<void> showPremiumGate(
   required String title,
   required String message,
 }) async {
+  AnalyticsService.trackPaywallViewed(source: 'premium_gate');
   final goUpgrade = await showDialog<bool>(
     context: context,
     builder: (ctx) => AlertDialog(

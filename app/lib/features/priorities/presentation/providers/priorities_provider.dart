@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/providers/database_providers.dart';
 import '../../../../core/utils/date_utils.dart';
+import '../../../analytics/data/analytics_service.dart';
 import '../../../sync/presentation/providers/sync_provider.dart';
 import '../../../timeline/presentation/providers/active_day_provider.dart';
 import '../../data/priority_repository.dart';
@@ -54,7 +55,9 @@ class PrioritiesNotifier extends _$PrioritiesNotifier {
     final current = state.valueOrNull ?? [];
     final p = current.where((p) => p.id == id).firstOrNull;
     if (p == null) return;
-    await _repo.setDone(id, isDone: !p.isDone);
+    final newDone = !p.isDone;
+    await _repo.setDone(id, isDone: newDone);
+    AnalyticsService.trackPriorityToggled(isDone: newDone);
     _triggerSync();
   }
 

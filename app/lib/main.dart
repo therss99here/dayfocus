@@ -8,7 +8,10 @@ import 'core/notifications/notification_service.dart';
 import 'core/providers/notification_providers.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'features/analytics/data/analytics_service.dart';
+import 'features/analytics/data/review_service.dart';
 import 'features/premium/data/premium_service.dart';
+import 'features/priorities/presentation/providers/priorities_provider.dart';
 import 'features/sync/presentation/providers/sync_provider.dart';
 import 'features/timeline/presentation/providers/active_day_provider.dart';
 import 'features/timeline/presentation/providers/timeline_provider.dart';
@@ -26,6 +29,12 @@ void main() async {
     await PremiumService.initialize();
   } catch (e) {
     debugPrint('[Main] PremiumService init failed: $e');
+  }
+
+  try {
+    await AnalyticsService.initialize();
+  } catch (e) {
+    debugPrint('[Main] AnalyticsService init failed: $e');
   }
 
   // Supabase is only initialised when credentials are present (env.json filled).
@@ -53,6 +62,7 @@ class DayfocusApp extends ConsumerStatefulWidget {
 class _DayfocusAppState extends ConsumerState<DayfocusApp>
     with WidgetsBindingObserver {
   ProviderSubscription<AsyncValue<List>>? _blockSub;
+  ProviderSubscription? _prioritySub;
 
   @override
   void initState() {
@@ -64,6 +74,10 @@ class _DayfocusAppState extends ConsumerState<DayfocusApp>
         timelineNotifierProvider,
         (_, next) => _syncNotifications(next),
         fireImmediately: true,
+      );
+      _prioritySub = ref.listenManual(
+        prioritiesNotifierProvider,
+        (prev, next) => _checkAllPrioritiesDone(prev, next),
       );
 
       // Initial sync on app launch (if signed in)
@@ -78,8 +92,20 @@ class _DayfocusAppState extends ConsumerState<DayfocusApp>
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       debugPrint('[Main] App resumed - triggering sync');
+      AnalyticsService.trackAppOpened();
       ref.read(syncNotifierProvider.notifier).syncOnResume();
     }
+  }
+
+  void _checkAllPrioritiesDone(AsyncValue<dynamic>? prev, AsyncValue<dynamic> next) {
+    final list = next.valueOrNull as List?;
+    if (list == null || list.isEmpty) return;
+    final allDone = list.every((p) => p.isDone == true);
+    if (!allDone) return;
+    final prevList = prev?.valueOrNull as List?;
+    if (prevList != null && prevList.every((p) => p.isDone == true)) return;
+    AnalyticsService.trackAllPrioritiesDone();
+    ReviewService.maybeRequestReview(trigger: 'all_priorities_done');
   }
 
   void _syncNotifications(AsyncValue<dynamic> next) {
@@ -100,6 +126,7 @@ class _DayfocusAppState extends ConsumerState<DayfocusApp>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _blockSub?.close();
+    _prioritySub?.close();
     super.dispose();
   }
 

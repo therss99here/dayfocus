@@ -2,7 +2,7 @@ name: dayfocus
 description: "Focus on what matters. Plan your day with intention."
 publish_to: 'none'
 
-version: 1.2.2+1
+version: 1.2.4+1
 
 environment:
   sdk: ^3.9.2
@@ -38,6 +38,10 @@ dependencies:
 
   # In-app purchases
   purchases_flutter: ^10.8.0
+
+  # Analytics & reviews
+  posthog_flutter: ^4.7.1
+  in_app_review: ^2.0.10
 
   # Utils
   intl: ^0.20.1
