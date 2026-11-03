@@ -9,6 +9,7 @@ abstract class AppConfig {
 
   static const privacyPolicyUrl = 'https://mydayfocus.com/privacy';
   static const termsOfUseUrl = 'https://mydayfocus.com/terms';
+  static const supportEmail = 'sengar.workshop@gmail.com';
 
   static bool get isConfigured =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;

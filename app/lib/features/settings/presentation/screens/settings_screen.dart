@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -9,6 +11,7 @@ import '../../../auth/presentation/widgets/auth_bottom_sheet.dart';
 import '../../../premium/presentation/providers/premium_provider.dart';
 import '../../../premium/presentation/screens/premium_screen.dart';
 import '../../../sync/presentation/providers/sync_provider.dart';
+import '../../../../core/providers/app_info_provider.dart';
 import '../providers/notification_settings_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -29,6 +32,8 @@ class SettingsScreen extends ConsumerWidget {
           _SyncSection(),
           SizedBox(height: AppSpacing.md),
           _NotificationsSection(),
+          SizedBox(height: AppSpacing.md),
+          _FeedbackSection(),
           SizedBox(height: AppSpacing.md),
           _AboutSection(),
           SizedBox(height: AppSpacing.lg),
@@ -193,9 +198,69 @@ class _NotificationsSection extends ConsumerWidget {
   }
 }
 
+// ── Feedback ─────────────────────────────────────────────────────────────────
+
+class _FeedbackSection extends ConsumerWidget {
+  const _FeedbackSection();
+
+  Future<void> _sendEmail(BuildContext context, {required String subject, required String body}) async {
+    final uri = Uri.parse(
+      'mailto:${AppConfig.supportEmail}'
+      '?subject=${Uri.encodeComponent(subject)}'
+      '&body=${Uri.encodeComponent(body)}',
+    );
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!launched && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('No email app found. Please email us at ${AppConfig.supportEmail}'),
+        ),
+      );
+    }
+  }
+
+  String _deviceInfo(String version) {
+    return '\n\n---\nApp Version: $version\nPlatform: ${Platform.operatingSystem} ${Platform.operatingSystemVersion}';
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appVersion = ref.watch(appInfoProvider).valueOrNull?.version ?? '';
+
+    return _Section(
+      label: 'FEEDBACK',
+      children: [
+        _ActionTile(
+          title: 'Report a Bug',
+          subtitle: 'Let us know if something isn\'t working',
+          icon: Icons.bug_report_outlined,
+          iconColor: AppColors.stateMissed,
+          onTap: () => _sendEmail(
+            context,
+            subject: '[Bug] Dayfocus - ',
+            body: 'Please describe the issue:\n\n\nSteps to reproduce:\n1. \n2. \n3. \n\nExpected behavior:\n\n${_deviceInfo(appVersion)}',
+          ),
+        ),
+        const _Divider(),
+        _ActionTile(
+          title: 'Send Feedback',
+          subtitle: 'Share ideas or suggestions with us',
+          icon: Icons.chat_bubble_outline,
+          iconColor: AppColors.accent,
+          onTap: () => _sendEmail(
+            context,
+            subject: '[Feedback] Dayfocus - ',
+            body: 'Your feedback:\n\n${_deviceInfo(appVersion)}',
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 // ── About ─────────────────────────────────────────────────────────────────────
 
-class _AboutSection extends StatelessWidget {
+class _AboutSection extends ConsumerWidget {
   const _AboutSection();
 
   Future<void> _openUrl(String url) async {
@@ -206,7 +271,9 @@ class _AboutSection extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appVersion = ref.watch(appInfoProvider).valueOrNull?.version ?? '';
+
     return _Section(
       label: 'ABOUT',
       children: [
@@ -220,7 +287,7 @@ class _AboutSection extends StatelessWidget {
           onTap: () => _openUrl(AppConfig.privacyPolicyUrl),
         ),
         const _Divider(),
-        _InfoTile(label: 'Version', value: '1.0.0'),
+        _InfoTile(label: 'Version', value: appVersion),
       ],
     );
   }
