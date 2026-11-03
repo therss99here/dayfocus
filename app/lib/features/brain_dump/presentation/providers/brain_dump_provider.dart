@@ -1,14 +1,16 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/providers/database_providers.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../sync/presentation/providers/sync_provider.dart';
 import '../../../timeline/presentation/providers/active_day_provider.dart';
 import '../../data/brain_dump_repository.dart';
+import '../../domain/brain_dump_content.dart';
 
 part 'brain_dump_provider.g.dart';
 
 @riverpod
-BrainDumpRepository brainDumpRepository(BrainDumpRepositoryRef ref) {
+BrainDumpRepository brainDumpRepository(Ref ref) {
   final db = ref.watch(appDatabaseProvider);
   return BrainDumpRepository(db.brainDumpDao);
 }
@@ -22,7 +24,7 @@ class BrainDumpNotifier extends _$BrainDumpNotifier {
   }
 
   @override
-  Stream<String> build() async* {
+  Stream<BrainDumpContent> build() async* {
     final activeDay = ref.watch(activeDayProvider);
     final dayId = formatDayId(activeDay);
     final db = ref.read(appDatabaseProvider);
@@ -33,8 +35,8 @@ class BrainDumpNotifier extends _$BrainDumpNotifier {
 
   String get _dayId => formatDayId(ref.read(activeDayProvider));
 
-  Future<void> save(String content) async {
-    await _repo.save(dayConfigId: _dayId, content: content);
+  Future<void> save(String deltaJson) async {
+    await _repo.save(dayConfigId: _dayId, deltaJson: deltaJson);
     _triggerSync();
   }
 }

@@ -20,8 +20,11 @@ class BoardScreen extends StatelessWidget {
         !kIsWeb && defaultTargetPlatform == TargetPlatform.macOS;
     final isWide =
         isMacOS || (size.width >= 720 && size.shortestSide >= 600);
-    return Scaffold(
-      body: isWide ? const _DesktopLayout() : const _MobileLayout(),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        body: isWide ? const _DesktopLayout() : const _MobileLayout(),
+      ),
     );
   }
 }
@@ -117,7 +120,7 @@ class _BrainDumpExpansion extends StatelessWidget {
       ),
       children: const [
         SizedBox(
-          height: 140,
+          height: 200,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
             child: BrainDumpWidget(),

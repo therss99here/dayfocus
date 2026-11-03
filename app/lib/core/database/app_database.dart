@@ -38,6 +38,7 @@ class BrainDumpNotes extends Table {
   TextColumn get id => text()();
   TextColumn get dayConfigId => text().references(DayConfigs, #id)();
   TextColumn get content => text()();
+  TextColumn get contentFormat => text().withDefault(const Constant('plain'))();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 
   @override
@@ -81,7 +82,17 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (m) => m.createAll(),
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await m.addColumn(brainDumpNotes, brainDumpNotes.contentFormat);
+      }
+    },
+  );
 
   static QueryExecutor _openConnection() {
     return driftDatabase(name: 'timebox_db');

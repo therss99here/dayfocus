@@ -86,6 +86,7 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
         const Divider(height: 1),
         Expanded(
           child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             controller: _scrollController,
             child: SizedBox(
               height: _totalHeight,

@@ -286,12 +286,14 @@ class SyncService {
           id: row['id'] as String,
           dayConfigId: row['day_config_id'] as String,
           content: row['content'] as String,
+          contentFormat: Value(row['content_format'] as String? ?? 'plain'),
         ));
       } else if (remoteUpdated.isAfter(existing.updatedAt)) {
         await (_db.update(_db.brainDumpNotes)
               ..where((t) => t.id.equals(row['id'] as String)))
             .write(BrainDumpNotesCompanion(
           content: Value(row['content'] as String),
+          contentFormat: Value(row['content_format'] as String? ?? 'plain'),
           updatedAt: Value(remoteUpdated),
         ));
       }
@@ -308,6 +310,7 @@ class SyncService {
         'user_id': userId,
         'day_config_id': item.dayConfigId,
         'content': item.content,
+        'content_format': item.contentFormat,
         'updated_at': item.updatedAt.toIso8601String(),
       });
     }
