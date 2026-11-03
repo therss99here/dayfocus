@@ -20,7 +20,7 @@ class NotificationSettingsNotifier
   @override
   Future<NotificationSettingsState> build() async {
     final prefs = await SharedPreferences.getInstance();
-    return NotificationSettingsState(
+    final settings = NotificationSettingsState(
       morningEnabled: prefs.getBool(_kMorningEnabled) ?? false,
       morningTime: TimeOfDay(
         hour: prefs.getInt(_kMorningHour) ?? 8,
@@ -32,6 +32,16 @@ class NotificationSettingsNotifier
         minute: prefs.getInt(_kEveningMinute) ?? 0,
       ),
     );
+
+    final notif = ref.read(notificationServiceProvider);
+    if (settings.morningEnabled) {
+      await notif.scheduleMorningReminder(settings.morningTime);
+    }
+    if (settings.eveningEnabled) {
+      await notif.scheduleEveningReview(settings.eveningTime);
+    }
+
+    return settings;
   }
 
   Future<void> setMorningEnabled(bool enabled) async {

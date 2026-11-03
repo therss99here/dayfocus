@@ -12,6 +12,7 @@ import 'features/analytics/data/analytics_service.dart';
 import 'features/analytics/data/review_service.dart';
 import 'features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'features/premium/data/premium_service.dart';
+import 'features/settings/presentation/providers/notification_settings_provider.dart';
 import 'features/priorities/presentation/providers/priorities_provider.dart';
 import 'features/sync/presentation/providers/sync_provider.dart';
 import 'features/timeline/presentation/providers/active_day_provider.dart';
@@ -75,6 +76,7 @@ class _DayfocusAppState extends ConsumerState<DayfocusApp>
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(notificationServiceProvider).requestPermission();
+      ref.read(notificationSettingsNotifierProvider);
       _blockSub = ref.listenManual(
         timelineNotifierProvider,
         (_, next) => _syncNotifications(next),

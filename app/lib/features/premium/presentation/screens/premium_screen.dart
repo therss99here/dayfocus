@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -35,10 +36,20 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
         await _showSuccessDialog();
         if (mounted) Navigator.of(context).pop(true);
       }
-    } catch (e) {
+    } on PlatformException catch (e) {
+      if (e.code == '1' ||
+          e.details?['readable_error_code'] == 'PURCHASE_CANCELLED' ||
+          e.details?['userCancelled'] == true) {
+        // User cancelled — do nothing
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Purchase could not be completed. Please try again.')),
+        );
+      }
+    } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Purchase failed: $e')),
+          const SnackBar(content: Text('Something went wrong. Please try again.')),
         );
       }
     } finally {
@@ -180,7 +191,11 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
               productsAsync.when(
                 loading: () =>
                     const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Text('Error loading products: $e'),
+                error: (_, __) => const Text(
+                  'Could not load plans. Please check your connection.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.textMuted),
+                ),
                 data: (products) {
                   if (products.isEmpty) {
                     return const Text(

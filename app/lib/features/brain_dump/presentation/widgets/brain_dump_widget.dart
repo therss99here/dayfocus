@@ -69,7 +69,7 @@ class _BrainDumpWidgetState extends ConsumerState<BrainDumpWidget> {
           child: CircularProgressIndicator(strokeWidth: 2),
         ),
       ),
-      error: (e, _) => Text('Error: $e'),
+      error: (_, __) => const Text('Could not load notes. Please try again.'),
       data: (content) {
         if (_lastDayId != currentDayId) {
           _lastDayId = currentDayId;

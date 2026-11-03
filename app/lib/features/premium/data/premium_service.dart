@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import '../../../core/config/app_config.dart';
 
@@ -72,13 +73,22 @@ class PremiumService {
       await Purchases.purchase(PurchaseParams.storeProduct(product));
       debugPrint('[PremiumService] Purchase completed successfully');
       return true;
-    } on PurchasesErrorCode catch (e) {
-      debugPrint('[PremiumService] Purchase error: $e');
-      if (e == PurchasesErrorCode.purchaseCancelledError) {
+    } on PlatformException catch (e) {
+      if (_isUserCancellation(e)) {
+        debugPrint('[PremiumService] Purchase cancelled by user');
         return false;
       }
       rethrow;
     }
+  }
+
+  static bool _isUserCancellation(PlatformException e) {
+    final details = e.details;
+    if (details is Map) {
+      if (details['userCancelled'] == true) return true;
+      if (details['readable_error_code'] == 'PURCHASE_CANCELLED') return true;
+    }
+    return e.code == '1' && (e.message?.contains('cancelled') ?? false);
   }
 
   Future<bool> restore() async {
