@@ -2,6 +2,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/providers/database_providers.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../analytics/data/analytics_service.dart';
+import '../../../premium/domain/premium_limits.dart';
+import '../../../premium/presentation/providers/premium_provider.dart';
 import '../../../sync/presentation/providers/sync_provider.dart';
 import '../../data/time_block_repository.dart';
 import '../../domain/entities/time_block.dart';
@@ -11,8 +13,8 @@ part 'timeline_provider.g.dart';
 
 @riverpod
 class TimelineNotifier extends _$TimelineNotifier {
-  static const defaultStartHour = 9;
-  static const defaultEndHour = 18;
+  static const defaultStartHour = PremiumLimits.freeStartHour;
+  static const defaultEndHour = PremiumLimits.freeEndHour;
 
   TimeBlockRepository get _repo => ref.read(timeBlockRepositoryProvider);
 
@@ -34,17 +36,19 @@ class TimelineNotifier extends _$TimelineNotifier {
 
   String get _dayId => formatDayId(ref.read(activeDayProvider));
 
-  (int, int) _nextSlot(int hour, int minute) =>
-      minute == 0 ? (hour, 30) : (hour + 1, 0);
+  (int, int) _endFromDuration(int startHour, int startMinute, int durationMinutes) {
+    final endTotal = startHour * 60 + startMinute + durationMinutes;
+    return (endTotal ~/ 60, endTotal % 60);
+  }
 
-  // Returns the new block's ID so the caller can use it.
   Future<String> addBlockFromPriority({
     required String priorityId,
     required String title,
     required int startHour,
     required int startMinute,
+    int durationMinutes = 30,
   }) async {
-    final (endH, endM) = _nextSlot(startHour, startMinute);
+    final (endH, endM) = _endFromDuration(startHour, startMinute, durationMinutes);
     final id = await _repo.add(
       dayConfigId: _dayId,
       title: title,
@@ -63,8 +67,9 @@ class TimelineNotifier extends _$TimelineNotifier {
     required String title,
     required int startHour,
     required int startMinute,
+    int durationMinutes = 30,
   }) async {
-    final (endH, endM) = _nextSlot(startHour, startMinute);
+    final (endH, endM) = _endFromDuration(startHour, startMinute, durationMinutes);
     await _repo.add(
       dayConfigId: _dayId,
       title: title,
@@ -81,9 +86,14 @@ class TimelineNotifier extends _$TimelineNotifier {
     final current = state.valueOrNull ?? [];
     final block = current.where((b) => b.id == id).firstOrNull;
     if (block == null) return;
+    final isPremium =
+        ref.read(premiumNotifierProvider).valueOrNull ?? false;
+    final maxEnd = isPremium
+        ? PremiumLimits.premiumEndHour * 60
+        : defaultEndHour * 60;
     final endTotal = newEndHour * 60 + newEndMinute;
     if (endTotal < block.startTotalMinutes + 30) return;
-    if (endTotal > defaultEndHour * 60) return;
+    if (endTotal > maxEnd) return;
     await _repo.updateTime(id, endHour: newEndHour, endMinute: newEndMinute);
     _triggerSync();
   }

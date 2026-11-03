@@ -381,6 +381,18 @@ class _FeatureList extends StatelessWidget {
           ),
           SizedBox(height: AppSpacing.sm),
           _FeatureRow(
+            icon: Icons.access_time_rounded,
+            title: '24-Hour Timeline',
+            subtitle: 'Free: 9 AM – 6 PM',
+          ),
+          SizedBox(height: AppSpacing.sm),
+          _FeatureRow(
+            icon: Icons.timer_outlined,
+            title: 'Custom Block Durations',
+            subtitle: 'Free: 30 min only',
+          ),
+          SizedBox(height: AppSpacing.sm),
+          _FeatureRow(
             icon: Icons.cloud_sync_rounded,
             title: 'Cross-device Sync',
             subtitle: 'Keep data everywhere',

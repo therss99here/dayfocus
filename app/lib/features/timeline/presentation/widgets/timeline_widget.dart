@@ -25,11 +25,19 @@ class TimelineWidget extends ConsumerStatefulWidget {
 class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
   final _scrollController = ScrollController();
 
-  static const _startHour = TimelineNotifier.defaultStartHour;
-  static const _endHour = TimelineNotifier.defaultEndHour;
-  static final _slots =
-      TimeSlot.generate(startHour: _startHour, endHour: _endHour);
-  static final _totalHeight = _slots.length * AppSpacing.slotHeight;
+  int _startHour(bool isPremium) => isPremium
+      ? PremiumLimits.premiumStartHour
+      : PremiumLimits.freeStartHour;
+
+  int _endHour(bool isPremium) => isPremium
+      ? PremiumLimits.premiumEndHour
+      : PremiumLimits.freeEndHour;
+
+  List<TimeSlot> _slots(bool isPremium) =>
+      TimeSlot.generate(startHour: _startHour(isPremium), endHour: _endHour(isPremium));
+
+  double _totalHeight(bool isPremium) =>
+      _slots(isPremium).length * AppSpacing.slotHeight;
 
   @override
   void initState() {
@@ -45,8 +53,10 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
 
   void _scrollToNow() {
     if (!_scrollController.hasClients) return;
+    final isPremium =
+        ref.read(premiumNotifierProvider).valueOrNull ?? false;
     final now = DateTime.now();
-    final minutesFromStart = now.hour * 60 + now.minute - _startHour * 60;
+    final minutesFromStart = now.hour * 60 + now.minute - _startHour(isPremium) * 60;
     if (minutesFromStart < 0) return;
     final offset =
         minutesFromStart / 30 * AppSpacing.slotHeight - 120;
@@ -57,15 +67,15 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
     );
   }
 
-  double _timeToOffset(int hour, int minute) {
-    final minutes = (hour * 60 + minute) - _startHour * 60;
+  double _timeToOffset(int hour, int minute, bool isPremium) {
+    final minutes = (hour * 60 + minute) - _startHour(isPremium) * 60;
     return minutes / 30 * AppSpacing.slotHeight;
   }
 
-  double? _currentTimeOffset(DateTime now) {
+  double? _currentTimeOffset(DateTime now, bool isPremium) {
     final total = now.hour * 60 + now.minute;
-    if (total < _startHour * 60 || total > _endHour * 60) return null;
-    return _timeToOffset(now.hour, now.minute);
+    if (total < _startHour(isPremium) * 60 || total > _endHour(isPremium) * 60) return null;
+    return _timeToOffset(now.hour, now.minute, isPremium);
   }
 
   @override
@@ -80,6 +90,9 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
         ? PremiumLimits.premiumTimeBlocksPerDay
         : PremiumLimits.freeTimeBlocksPerDay;
 
+    final slots = _slots(isPremium);
+    final totalHeight = _totalHeight(isPremium);
+
     return Column(
       children: [
         const _DayHeader(),
@@ -89,21 +102,22 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             controller: _scrollController,
             child: SizedBox(
-              height: _totalHeight,
+              height: totalHeight,
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
                   // Background: slot rows with drop targets
                   Column(
                     children: [
-                      for (final slot in _slots)
+                      for (final slot in slots)
                         TimeSlotRow(
                           key: ValueKey('slot_${slot.hour}_${slot.minute}'),
                           hour: slot.hour,
                           minute: slot.minute,
                           isOnHour: slot.isOnHour,
                           label: slot.label,
-                          onDrop: (data) {
+                          isPremium: isPremium,
+                          onDrop: (data, durationMinutes) {
                             if (!isPremium && blocks.length >= blockLimit) {
                               showPremiumGate(
                                 context,
@@ -121,9 +135,10 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
                               title: data.title,
                               startHour: slot.hour,
                               startMinute: slot.minute,
+                              durationMinutes: durationMinutes,
                             );
                           },
-                          onCreate: (title) {
+                          onCreate: (title, durationMinutes) {
                             if (!isPremium && blocks.length >= blockLimit) {
                               showPremiumGate(
                                 context,
@@ -140,6 +155,7 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
                               title: title,
                               startHour: slot.hour,
                               startMinute: slot.minute,
+                              durationMinutes: durationMinutes,
                             );
                           },
                         ),
@@ -151,7 +167,7 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
                       key: ValueKey(block.id),
                       block: block,
                       topOffset:
-                          _timeToOffset(block.startHour, block.startMinute),
+                          _timeToOffset(block.startHour, block.startMinute, isPremium),
                       height: block.durationMinutes /
                           30 *
                           AppSpacing.slotHeight,
@@ -171,7 +187,7 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
                   // Current time indicator
                   timeAsync.when(
                     data: (now) {
-                      final offset = _currentTimeOffset(now);
+                      final offset = _currentTimeOffset(now, isPremium);
                       if (offset == null) return const SizedBox.shrink();
                       return CurrentTimeIndicator(topOffset: offset);
                     },

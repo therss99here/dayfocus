@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../sync/presentation/providers/sync_provider.dart';
 import '../../data/premium_service.dart';
 
@@ -13,9 +14,10 @@ PremiumService premiumService(Ref ref) => PremiumService();
 class PremiumNotifier extends _$PremiumNotifier {
   @override
   Future<bool> build() async {
+    final user = ref.watch(currentUserProvider);
+    if (user == null) return false;
     final service = ref.read(premiumServiceProvider);
     final isPremium = await service.isPremium();
-    // Sync premium status to server on initial check
     _syncPremiumStatus();
     return isPremium;
   }
