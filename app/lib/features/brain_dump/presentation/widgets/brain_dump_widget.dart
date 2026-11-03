@@ -180,10 +180,9 @@ class _BrainDumpToolbar extends StatelessWidget {
         showDirection: false,
         showLineHeightButton: false,
         showDividers: false,
-        multiRowsDisplay: true,
-        toolbarRunSpacing: 0,
+        multiRowsDisplay: false,
         toolbarSectionSpacing: 0,
-        headerStyleType: HeaderStyleType.original,
+        headerStyleType: HeaderStyleType.buttons,
         iconTheme: QuillIconTheme(
           iconButtonSelectedData: IconButtonData(
             iconSize: 16,
