@@ -64,7 +64,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     await _markOnboardingCompleted();
     AnalyticsService.trackOnboardingCompleted(page: _currentPage + 1);
     if (mounted) {
-      context.go('/');
+      context.go('/trial-offer');
     }
   }
 

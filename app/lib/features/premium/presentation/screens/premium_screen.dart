@@ -22,7 +22,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
   @override
   void initState() {
     super.initState();
-    AnalyticsService.trackPaywallViewed(source: 'premium_screen');
+    AnalyticsService.trackPaywallViewed(source: 'premium_screen_full');
   }
 
   Future<void> _purchase(StoreProduct product) async {

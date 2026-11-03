@@ -112,6 +112,7 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
                                     'Free users can add up to $blockLimit time '
                                     'blocks per day. Upgrade to Premium for '
                                     'unlimited time blocks.',
+                                source: 'time_block_limit',
                               );
                               return;
                             }
@@ -131,6 +132,7 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
                                     'Free users can add up to $blockLimit time '
                                     'blocks per day. Upgrade to Premium for '
                                     'unlimited time blocks.',
+                                source: 'time_block_limit',
                               );
                               return;
                             }
@@ -223,6 +225,7 @@ class _DayHeader extends ConsumerWidget {
                       'Free users can access the last '
                       '${PremiumLimits.freeHistoryDays} days. '
                       'Upgrade to Premium for full history.',
+                  source: 'history_limit',
                 );
                 return;
               }

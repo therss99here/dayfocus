@@ -38,6 +38,7 @@ class _AddPriorityFieldState extends ConsumerState<AddPriorityField> {
           message:
               'Free users can add up to ${PremiumLimits.freePrioritiesPerDay} '
               'priorities per day. Upgrade to Premium for unlimited priorities.',
+          source: 'priority_limit',
         );
         return;
       }
