@@ -4,7 +4,6 @@
 build/
 *.iml
 .metadata
-pubspec.lock
 
 # IDE
 .idea/
