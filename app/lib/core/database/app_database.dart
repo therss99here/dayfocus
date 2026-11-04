@@ -27,6 +27,7 @@ class Priorities extends Table {
   TextColumn get title => text()();
   BoolColumn get isDone => boolean().withDefault(const Constant(false))();
   IntColumn get sortOrder => integer()();
+  IntColumn get estimatedMinutes => integer().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 
@@ -82,7 +83,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -90,6 +91,9 @@ class AppDatabase extends _$AppDatabase {
     onUpgrade: (m, from, to) async {
       if (from < 2) {
         await m.addColumn(brainDumpNotes, brainDumpNotes.contentFormat);
+      }
+      if (from < 3) {
+        await m.addColumn(priorities, priorities.estimatedMinutes);
       }
     },
   );

@@ -67,6 +67,15 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
     );
   }
 
+  void _showOverlapSnackbar(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('This time slot overlaps with an existing block'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
   double _timeToOffset(int hour, int minute, bool isPremium) {
     final minutes = (hour * 60 + minute) - _startHour(isPremium) * 60;
     return minutes / 30 * AppSpacing.slotHeight;
@@ -130,13 +139,18 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
                               );
                               return;
                             }
+                            final duration = data.estimatedMinutes ?? durationMinutes;
                             notifier.addBlockFromPriority(
                               priorityId: data.id,
                               title: data.title,
                               startHour: slot.hour,
                               startMinute: slot.minute,
-                              durationMinutes: durationMinutes,
-                            );
+                              durationMinutes: duration,
+                            ).then((id) {
+                              if (id == null && context.mounted) {
+                                _showOverlapSnackbar(context);
+                              }
+                            });
                           },
                           onCreate: (title, durationMinutes) {
                             if (!isPremium && blocks.length >= blockLimit) {
@@ -156,7 +170,11 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
                               startHour: slot.hour,
                               startMinute: slot.minute,
                               durationMinutes: durationMinutes,
-                            );
+                            ).then((ok) {
+                              if (!ok && context.mounted) {
+                                _showOverlapSnackbar(context);
+                              }
+                            });
                           },
                         ),
                     ],
@@ -171,8 +189,13 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
                       height: block.durationMinutes /
                           30 *
                           AppSpacing.slotHeight,
-                      onResize: (endH, endM) =>
-                          notifier.resizeBlock(block.id, endH, endM),
+                      onResize: (endH, endM) {
+                        notifier.resizeBlock(block.id, endH, endM).then((ok) {
+                          if (!ok && context.mounted) {
+                            _showOverlapSnackbar(context);
+                          }
+                        });
+                      },
                       onToggleComplete: () {
                         final wasDone =
                             block.status == TimeBlockStatus.completed;

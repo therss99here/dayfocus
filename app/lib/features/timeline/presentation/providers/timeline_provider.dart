@@ -41,7 +41,19 @@ class TimelineNotifier extends _$TimelineNotifier {
     return (endTotal ~/ 60, endTotal % 60);
   }
 
-  Future<String> addBlockFromPriority({
+  bool _wouldOverlap(int startMin, int endMin, {String? excludeId}) {
+    final current = state.valueOrNull ?? [];
+    for (final block in current) {
+      if (block.id == excludeId) continue;
+      if (startMin < block.endTotalMinutes && endMin > block.startTotalMinutes) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// Returns the new block's ID, or null if rejected due to overlap.
+  Future<String?> addBlockFromPriority({
     required String priorityId,
     required String title,
     required int startHour,
@@ -49,6 +61,9 @@ class TimelineNotifier extends _$TimelineNotifier {
     int durationMinutes = 30,
   }) async {
     final (endH, endM) = _endFromDuration(startHour, startMinute, durationMinutes);
+    final startMin = startHour * 60 + startMinute;
+    final endMin = endH * 60 + endM;
+    if (_wouldOverlap(startMin, endMin)) return null;
     final id = await _repo.add(
       dayConfigId: _dayId,
       title: title,
@@ -63,13 +78,17 @@ class TimelineNotifier extends _$TimelineNotifier {
     return id;
   }
 
-  Future<void> addBlock({
+  /// Returns false if rejected due to overlap.
+  Future<bool> addBlock({
     required String title,
     required int startHour,
     required int startMinute,
     int durationMinutes = 30,
   }) async {
     final (endH, endM) = _endFromDuration(startHour, startMinute, durationMinutes);
+    final startMin = startHour * 60 + startMinute;
+    final endMin = endH * 60 + endM;
+    if (_wouldOverlap(startMin, endMin)) return false;
     await _repo.add(
       dayConfigId: _dayId,
       title: title,
@@ -80,22 +99,25 @@ class TimelineNotifier extends _$TimelineNotifier {
     );
     AnalyticsService.trackTimeBlockCreated();
     _triggerSync();
+    return true;
   }
 
-  Future<void> resizeBlock(String id, int newEndHour, int newEndMinute) async {
+  Future<bool> resizeBlock(String id, int newEndHour, int newEndMinute) async {
     final current = state.valueOrNull ?? [];
     final block = current.where((b) => b.id == id).firstOrNull;
-    if (block == null) return;
+    if (block == null) return false;
     final isPremium =
         ref.read(premiumNotifierProvider).valueOrNull ?? false;
     final maxEnd = isPremium
         ? PremiumLimits.premiumEndHour * 60
         : defaultEndHour * 60;
     final endTotal = newEndHour * 60 + newEndMinute;
-    if (endTotal < block.startTotalMinutes + 30) return;
-    if (endTotal > maxEnd) return;
+    if (endTotal < block.startTotalMinutes + 30) return false;
+    if (endTotal > maxEnd) return false;
+    if (_wouldOverlap(block.startTotalMinutes, endTotal, excludeId: id)) return false;
     await _repo.updateTime(id, endHour: newEndHour, endMinute: newEndMinute);
     _triggerSync();
+    return true;
   }
 
   Future<void> toggleComplete(String id) async {

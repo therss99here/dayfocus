@@ -19,6 +19,7 @@ class PriorityRepository {
     required String dayConfigId,
     required String title,
     required int sortOrder,
+    int? estimatedMinutes,
   }) async {
     final id = _uuid.v4();
     await _db.priorityDao.insertOne(PrioritiesCompanion.insert(
@@ -26,6 +27,7 @@ class PriorityRepository {
       dayConfigId: dayConfigId,
       title: title,
       sortOrder: sortOrder,
+      estimatedMinutes: Value(estimatedMinutes),
     ));
     return id;
   }
@@ -64,5 +66,6 @@ class PriorityRepository {
         title: row.title,
         isDone: row.isDone,
         sortOrder: row.sortOrder,
+        estimatedMinutes: row.estimatedMinutes,
       );
 }

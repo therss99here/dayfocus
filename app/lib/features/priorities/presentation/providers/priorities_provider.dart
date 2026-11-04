@@ -31,7 +31,7 @@ class PrioritiesNotifier extends _$PrioritiesNotifier {
 
   String get _dayId => formatDayId(ref.read(activeDayProvider));
 
-  Future<void> add(String title) async {
+  Future<void> add(String title, {int? estimatedMinutes}) async {
     final t = title.trim();
     if (t.isEmpty) return;
     final current = state.valueOrNull ?? [];
@@ -42,6 +42,7 @@ class PrioritiesNotifier extends _$PrioritiesNotifier {
       dayConfigId: _dayId,
       title: t,
       sortOrder: maxOrder,
+      estimatedMinutes: estimatedMinutes,
     );
     _triggerSync();
   }

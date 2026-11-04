@@ -49,7 +49,11 @@ class PriorityTile extends ConsumerWidget {
           // Main body — Draggable onto the timeline
           Expanded(
             child: Draggable<PriorityDragData>(
-              data: PriorityDragData(id: priority.id, title: priority.title),
+              data: PriorityDragData(
+                id: priority.id,
+                title: priority.title,
+                estimatedMinutes: priority.estimatedMinutes,
+              ),
               feedback: _DragFeedback(title: priority.title),
               childWhenDragging: Opacity(opacity: 0.35, child: body),
               child: body,
@@ -84,6 +88,13 @@ class _TileBody extends StatelessWidget {
   final bool isLinked;
   final VoidCallback onToggle;
 
+  static String _formatDuration(int minutes) {
+    if (minutes < 60) return '${minutes}m';
+    final h = minutes ~/ 60;
+    final m = minutes % 60;
+    return m == 0 ? '${h}h' : '$h.${m == 30 ? '5' : m}h';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -112,6 +123,25 @@ class _TileBody extends StatelessWidget {
             ),
           ),
         ),
+        if (priority.estimatedMinutes != null)
+          Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.accent.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                _formatDuration(priority.estimatedMinutes!),
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.accent,
+                ),
+              ),
+            ),
+          ),
         if (isLinked)
           Padding(
             padding: const EdgeInsets.only(right: 4),
