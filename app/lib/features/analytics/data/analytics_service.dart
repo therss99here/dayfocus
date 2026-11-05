@@ -70,4 +70,9 @@ class AnalyticsService {
 
   static void trackOnboardingSkipped({required int page}) =>
       _track('onboarding_skipped', {'page': page});
+
+  static void trackShareTapped() => _track('share_tapped');
+
+  static void trackDayShared({required String format}) =>
+      _track('day_shared', {'format': format});
 }

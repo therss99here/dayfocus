@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../brain_dump/presentation/widgets/brain_dump_widget.dart';
 import '../../../priorities/presentation/widgets/priority_list.dart';
+import '../../../share/presentation/widgets/share_button.dart';
 import '../../../timeline/presentation/widgets/timeline_widget.dart';
 
 class BoardScreen extends StatelessWidget {
@@ -189,6 +190,8 @@ class _AppHeader extends StatelessWidget {
             ),
           ),
           const Spacer(),
+          const ShareButton(),
+          const SizedBox(width: 8),
           GestureDetector(
             onTap: () => context.push(AppRoutes.settings),
             behavior: HitTestBehavior.opaque,
