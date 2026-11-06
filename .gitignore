@@ -41,8 +41,7 @@ app/env.json
 *.plist
 client_secret_*.json
 
-# Generated code (can be regenerated with build_runner)
-*.g.dart
+# Generated code - tracked in git to avoid slow build_runner in CI
 
 # Test/coverage
 coverage/

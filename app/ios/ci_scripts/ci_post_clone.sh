@@ -5,9 +5,17 @@
 
 set -e
 
+# Keepalive: print a dot every 60s to prevent Xcode Cloud inactivity timeout
+keepalive() {
+  while true; do sleep 60; echo "... still running ($1)"; done
+}
+
 # Install Flutter
 echo "Installing Flutter..."
+keepalive "flutter install" &
+KEEPALIVE_PID=$!
 git clone https://github.com/flutter/flutter.git --depth 1 -b stable $HOME/flutter
+kill $KEEPALIVE_PID 2>/dev/null || true
 export PATH="$PATH:$HOME/flutter/bin"
 
 # CRITICAL: Disable Swift Package Manager FIRST before any Flutter commands
@@ -16,7 +24,10 @@ flutter config --no-enable-swift-package-manager
 
 # Precache iOS artifacts
 echo "Precaching iOS artifacts..."
+keepalive "precache" &
+KEEPALIVE_PID=$!
 flutter precache --ios
+kill $KEEPALIVE_PID 2>/dev/null || true
 
 # Navigate to app directory
 cd "$CI_PRIMARY_REPOSITORY_PATH/app"
@@ -47,19 +58,18 @@ EOF
 echo "Getting Flutter dependencies..."
 flutter pub get
 
-# Run code generation (required for .g.dart files - Riverpod, Drift, etc.)
-echo "Running build_runner for code generation..."
-dart run build_runner build --delete-conflicting-outputs
+# .g.dart files are tracked in git — no build_runner needed in CI
 
 # Generate iOS project files (creates AppFrameworkInfo.plist, etc.)
 echo "Generating iOS project files..."
+keepalive "ios config" &
+KEEPALIVE_PID=$!
 flutter build ios --config-only --no-codesign
+kill $KEEPALIVE_PID 2>/dev/null || true
 
 # Install pods manually (more reliable in CI)
 cd ios
 echo "Installing CocoaPods dependencies..."
 pod install
-
-echo "CI post-clone completed successfully"
 
 echo "CI post-clone completed successfully"
