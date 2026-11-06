@@ -220,6 +220,10 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                     orElse: () => products.first,
                   );
 
+                  final hasTrial =
+                      selectedProduct.introductoryPrice != null &&
+                      selectedProduct.introductoryPrice!.price == 0;
+
                   return Column(
                     children: [
                       if (yearly != null)
@@ -266,9 +270,11 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                                   color: Colors.white,
                                 ),
                               )
-                            : const Text(
-                                'Start 7-day free trial',
-                                style: TextStyle(
+                            : Text(
+                                hasTrial
+                                    ? 'Start 7-day free trial'
+                                    : 'Subscribe now',
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -276,7 +282,9 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                       ),
                       const SizedBox(height: AppSpacing.xs),
                       Text(
-                        'Cancel anytime. Auto-renews after trial.',
+                        hasTrial
+                            ? 'Cancel anytime. Auto-renews after trial.'
+                            : 'Cancel anytime.',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: AppColors.textMuted,

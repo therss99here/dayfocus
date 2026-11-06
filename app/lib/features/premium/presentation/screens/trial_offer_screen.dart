@@ -74,23 +74,86 @@ class _TrialOfferScreenState extends ConsumerState<TrialOfferScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
-              Text(
-                'Try Premium free\nfor 7 days',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                  height: 1.2,
+              productsAsync.when(
+                data: (products) {
+                  final yearly = products
+                      .where((p) => p.identifier.contains('yearly'))
+                      .firstOrNull;
+                  final hasTrial = yearly?.introductoryPrice != null &&
+                      yearly!.introductoryPrice!.price == 0;
+                  return Column(
+                    children: [
+                      Text(
+                        hasTrial
+                            ? 'Try Premium free\nfor 7 days'
+                            : 'Unlock Premium',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: textColor,
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      Text(
+                        hasTrial
+                            ? 'Unlock everything. Cancel anytime.'
+                            : 'Get the most out of MyDayfocus.',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+                loading: () => Column(
+                  children: [
+                    Text(
+                      'Unlock Premium',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                        height: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    const Text(
+                      'Get the most out of MyDayfocus.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              const Text(
-                'Unlock everything. Cancel anytime.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppColors.textMuted,
+                error: (_, __) => Column(
+                  children: [
+                    Text(
+                      'Unlock Premium',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                        height: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    const Text(
+                      'Get the most out of MyDayfocus.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
@@ -128,10 +191,14 @@ class _TrialOfferScreenState extends ConsumerState<TrialOfferScreen> {
                       final yearly = products
                           .where((p) => p.identifier.contains('yearly'))
                           .firstOrNull;
+                      final hasTrial = yearly?.introductoryPrice != null &&
+                          yearly!.introductoryPrice!.price == 0;
                       return Text(
-                        yearly != null
+                        hasTrial
                             ? 'Start free trial — ${yearly.priceString}/year'
-                            : 'Start 7-day free trial',
+                            : yearly != null
+                                ? 'Subscribe — ${yearly.priceString}/year'
+                                : 'Subscribe now',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -139,12 +206,12 @@ class _TrialOfferScreenState extends ConsumerState<TrialOfferScreen> {
                       );
                     },
                     loading: () => const Text(
-                      'Start 7-day free trial',
+                      'View plans',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     error: (_, __) => const Text(
-                      'Start 7-day free trial',
+                      'View plans',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),

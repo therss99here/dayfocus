@@ -129,10 +129,12 @@ class _PremiumGateSheet extends ConsumerWidget {
                     final yearly = products
                         .where((p) => p.identifier.contains('yearly'))
                         .firstOrNull;
+                    final hasTrial = yearly?.introductoryPrice != null &&
+                        yearly!.introductoryPrice!.price == 0;
                     return Text(
-                      yearly != null
+                      hasTrial
                           ? 'Start free trial — ${yearly.priceString}/year'
-                          : 'Start 7-day free trial',
+                          : 'Upgrade to Premium',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -140,11 +142,11 @@ class _PremiumGateSheet extends ConsumerWidget {
                     );
                   },
                   loading: () => const Text(
-                    'Start 7-day free trial',
+                    'Upgrade to Premium',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                   error: (_, __) => const Text(
-                    'Start 7-day free trial',
+                    'Upgrade to Premium',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
