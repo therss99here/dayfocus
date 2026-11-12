@@ -10,6 +10,9 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/app_config.dart';
+import '../../../../core/providers/database_providers.dart';
+import '../../../analytics/data/analytics_service.dart';
+import '../../../premium/data/premium_service.dart';
 
 part 'auth_provider.g.dart';
 
@@ -100,6 +103,8 @@ class AuthNotifier extends _$AuthNotifier {
   // ── Sign out ──────────────────────────────────────────────────────────────
 
   Future<void> signOut() async {
+    AnalyticsService.reset();
+    await PremiumService.logout();
     await _googleSignIn.signOut();
     await _client.auth.signOut();
   }
@@ -108,10 +113,11 @@ class AuthNotifier extends _$AuthNotifier {
 
   Future<void> deleteAccount() async {
     _assertConfigured();
+    AnalyticsService.reset();
+    await PremiumService.logout();
     await _googleSignIn.signOut();
-    // Delete user from Supabase (requires service role or edge function)
-    // For now, sign out and mark as deleted via RPC
     await _client.rpc('delete_user');
+    await ref.read(appDatabaseProvider).deleteAllData();
     await _client.auth.signOut();
   }
 

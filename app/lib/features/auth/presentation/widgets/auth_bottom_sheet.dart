@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../analytics/data/analytics_service.dart';
 import '../../../sync/presentation/providers/sync_provider.dart';
 import '../providers/auth_provider.dart';
 
@@ -35,7 +36,8 @@ class _AuthBottomSheetState extends ConsumerState<AuthBottomSheet> {
     });
     try {
       await action();
-      // Sync data after successful sign-in
+      final user = ref.read(authNotifierProvider).valueOrNull;
+      if (user != null) AnalyticsService.identify(user.id);
       await ref.read(syncNotifierProvider.notifier).syncNow();
       if (mounted) Navigator.of(context).pop();
     } on AuthException catch (e) {

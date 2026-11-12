@@ -81,6 +81,7 @@ class UserSettings extends Table {
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
+  AppDatabase.forTesting(super.e);
 
   @override
   int get schemaVersion => 3;
@@ -100,6 +101,14 @@ class AppDatabase extends _$AppDatabase {
 
   static QueryExecutor _openConnection() {
     return driftDatabase(name: 'timebox_db');
+  }
+
+  Future<void> deleteAllData() async {
+    await delete(brainDumpNotes).go();
+    await delete(timeBlocks).go();
+    await delete(priorities).go();
+    await delete(dayConfigs).go();
+    await delete(userSettings).go();
   }
 
   Future<void> ensureDayConfig(String id, DateTime date) async {

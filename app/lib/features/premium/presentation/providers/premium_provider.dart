@@ -16,6 +16,7 @@ class PremiumNotifier extends _$PremiumNotifier {
   Future<bool> build() async {
     final user = ref.watch(currentUserProvider);
     if (user == null) return false;
+    await PremiumService.login(user.id);
     final service = ref.read(premiumServiceProvider);
     final isPremium = await service.isPremium();
     _syncPremiumStatus();

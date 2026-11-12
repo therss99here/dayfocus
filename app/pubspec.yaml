@@ -2,7 +2,7 @@ name: dayfocus
 description: "Focus on what matters. Plan your day with intention."
 publish_to: 'none'
 
-version: 1.4.5+1
+version: 1.4.7+1
 
 environment:
   sdk: ^3.9.2
@@ -61,6 +61,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  patrol: ^3.13.0
+  patrol_finders: ^2.5.0
+  mockito: ^5.4.4
 
   # Code generation
   build_runner: ^2.4.13
