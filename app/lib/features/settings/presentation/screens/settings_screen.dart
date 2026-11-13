@@ -1,16 +1,13 @@
 import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/config/app_config.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../auth/presentation/widgets/auth_bottom_sheet.dart';
-import '../../../premium/data/premium_service.dart';
 import '../../../premium/presentation/providers/premium_provider.dart';
 import '../../../premium/presentation/screens/premium_screen.dart';
 import '../../../sync/presentation/providers/sync_provider.dart';
@@ -291,10 +288,6 @@ class _AboutSection extends ConsumerWidget {
         ),
         const _Divider(),
         _InfoTile(label: 'Version', value: appVersion),
-        if (PremiumService.isConfigured) ...[
-          const _Divider(),
-          _DebugIdTile(),
-        ],
       ],
     );
   }
@@ -600,50 +593,6 @@ class _DeleteAccountTile extends ConsumerWidget {
   }
 }
 
-class _DebugIdTile extends StatelessWidget {
-  const _DebugIdTile();
-
-  Future<void> _copyCustomerId(BuildContext context) async {
-    try {
-      final info = await Purchases.getCustomerInfo();
-      final id = info.originalAppUserId;
-      await Clipboard.setData(ClipboardData(text: id));
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Copied: $id')),
-        );
-      }
-    } catch (_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not retrieve customer ID')),
-        );
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => _copyCustomerId(context),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: AppSpacing.sm, vertical: 14),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text('Customer ID',
-                  style: TextStyle(fontSize: 15)),
-            ),
-            Text('Tap to copy',
-                style: TextStyle(
-                    fontSize: 14, color: AppColors.textMuted)),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class _SyncNowTile extends ConsumerWidget {
   const _SyncNowTile();
