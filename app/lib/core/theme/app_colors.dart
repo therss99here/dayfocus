@@ -18,6 +18,8 @@ class AppColors {
   // -- Text (shared)
   static const textPrimary = Color(0xFFF5F5F7);
   static const textPrimaryLight = Color(0xFF1C1C1E);
+  static const textSecondary = Color(0xFFB0B0B5);
+  static const textSecondaryLight = Color(0xFF6E6E73);
   static const textMuted = Color(0xFF8E8E93);
 
   // -- Brand accent

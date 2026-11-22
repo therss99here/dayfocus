@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import 'app_colors.dart';
 import 'app_typography.dart';
 
@@ -50,7 +52,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
         ),
-        hintStyle: const TextStyle(color: AppColors.textMuted),
+        hintStyle: GoogleFonts.sora(
+          fontSize: 15,
+          color: AppColors.textMuted,
+        ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
@@ -60,7 +65,7 @@ class AppTheme {
             borderRadius: BorderRadius.circular(8),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          textStyle: const TextStyle(
+          textStyle: GoogleFonts.sora(
             fontSize: 15,
             fontWeight: FontWeight.w600,
           ),
@@ -119,7 +124,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
         ),
-        hintStyle: const TextStyle(color: AppColors.textMuted),
+        hintStyle: GoogleFonts.sora(
+          fontSize: 15,
+          color: AppColors.textMuted,
+        ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
@@ -129,7 +137,7 @@ class AppTheme {
             borderRadius: BorderRadius.circular(8),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          textStyle: const TextStyle(
+          textStyle: GoogleFonts.sora(
             fontSize: 15,
             fontWeight: FontWeight.w600,
           ),

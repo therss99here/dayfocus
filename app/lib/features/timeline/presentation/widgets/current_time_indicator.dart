@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 
 class CurrentTimeIndicator extends StatelessWidget {
   const CurrentTimeIndicator({super.key, required this.topOffset});
@@ -19,27 +20,22 @@ class CurrentTimeIndicator extends StatelessWidget {
         children: [
           SizedBox(
             width: AppSpacing.timelineLabelWidth,
-            child: const Text(
+            child: Text(
               'NOW',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 9,
-                fontWeight: FontWeight.w700,
-                color: AppColors.accent,
-                letterSpacing: 0.8,
-              ),
+              style: AppTypography.micro(context),
             ),
           ),
           Container(
-            width: 7,
-            height: 7,
+            width: 8,
+            height: 8,
             decoration: const BoxDecoration(
               color: AppColors.accent,
               shape: BoxShape.circle,
             ),
           ),
           Expanded(
-            child: Container(height: 1.5, color: AppColors.accent),
+            child: Container(height: 2, color: AppColors.accent),
           ),
           const SizedBox(width: 4),
         ],

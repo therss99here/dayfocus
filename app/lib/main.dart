@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/config/app_config.dart';
 import 'core/notifications/notification_service.dart';
@@ -50,6 +51,8 @@ void main() async {
       debugPrint('[Main] Supabase init failed: $e');
     }
   }
+
+  GoogleFonts.sora();
 
   final showOnboarding = !await isOnboardingCompleted();
 

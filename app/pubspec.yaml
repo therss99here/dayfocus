@@ -2,7 +2,7 @@ name: dayfocus
 description: "Focus on what matters. Plan your day with intention."
 publish_to: 'none'
 
-version: 1.4.8+1
+version: 1.4.9+1
 
 environment:
   sdk: ^3.9.2
@@ -55,6 +55,7 @@ dependencies:
   package_info_plus: ^8.0.0
   flutter_quill: ^11.5.0
 
+  google_fonts: ^6.2.1
   cupertino_icons: ^1.0.8
 
 dev_dependencies:

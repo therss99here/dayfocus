@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../domain/entities/time_block.dart';
 
 class TimeBlockWidget extends StatefulWidget {
@@ -61,16 +62,16 @@ class _TimeBlockWidgetState extends State<TimeBlockWidget> {
             clipBehavior: Clip.hardEdge,
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(8, 6, 6, 14),
+                padding: const EdgeInsets.fromLTRB(10, 6, 6, 14),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       widget.block.title,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
+                      style: AppTypography.body(context).copyWith(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                         decoration:
                             isCompleted ? TextDecoration.lineThrough : null,
                         color: isCompleted ? AppColors.textMuted : null,
@@ -83,7 +84,7 @@ class _TimeBlockWidgetState extends State<TimeBlockWidget> {
                         padding: const EdgeInsets.only(top: 2),
                         child: Icon(
                           Icons.check_circle,
-                          size: 11,
+                          size: 13,
                           color: AppColors.stateCompleted,
                         ),
                       ),

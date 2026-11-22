@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/priority_drag_data.dart';
 import '../../../timeline/presentation/providers/timeline_provider.dart';
 import '../../domain/entities/priority_entity.dart';
@@ -43,7 +45,7 @@ class PriorityTile extends ConsumerWidget {
     // Key must be on the outermost widget returned to ReorderableListView.
     return Padding(
       key: ValueKey(priority.id),
-      padding: const EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(vertical: 7),
       child: Row(
         children: [
           // Main body — Draggable onto the timeline
@@ -66,7 +68,7 @@ class PriorityTile extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
               child: Icon(
                 Icons.drag_indicator,
-                size: 14,
+                size: 16,
                 color: AppColors.textMuted.withValues(alpha: 0.4),
               ),
             ),
@@ -103,10 +105,10 @@ class _TileBody extends StatelessWidget {
           onTap: onToggle,
           behavior: HitTestBehavior.opaque,
           child: Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: 10),
             child: Icon(
               priority.isDone ? Icons.check_circle : Icons.circle_outlined,
-              size: 16,
+              size: 20,
               color: priority.isDone
                   ? AppColors.stateCompleted
                   : AppColors.textMuted,
@@ -116,8 +118,7 @@ class _TileBody extends StatelessWidget {
         Expanded(
           child: Text(
             priority.title,
-            style: TextStyle(
-              fontSize: 13,
+            style: AppTypography.body(context).copyWith(
               decoration: priority.isDone ? TextDecoration.lineThrough : null,
               color: priority.isDone ? AppColors.textMuted : null,
             ),
@@ -127,16 +128,14 @@ class _TileBody extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: 4),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
               decoration: BoxDecoration(
                 color: AppColors.accent.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
                 _formatDuration(priority.estimatedMinutes!),
-                style: const TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
+                style: AppTypography.label(context).copyWith(
                   color: AppColors.accent,
                 ),
               ),
@@ -147,7 +146,7 @@ class _TileBody extends StatelessWidget {
             padding: const EdgeInsets.only(right: 4),
             child: Icon(
               Icons.link,
-              size: 11,
+              size: 14,
               color: AppColors.stateScheduled.withValues(alpha: 0.7),
             ),
           ),
@@ -187,13 +186,13 @@ class _DragFeedback extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.access_time, size: 13, color: AppColors.accent),
+            const Icon(Icons.access_time, size: 15, color: AppColors.accent),
             const SizedBox(width: 6),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
+              style: GoogleFonts.sora(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
               ),
             ),

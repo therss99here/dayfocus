@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../premium/domain/premium_limits.dart';
 import '../../../premium/presentation/providers/premium_provider.dart';
 import '../../../premium/presentation/widgets/premium_gate.dart';
@@ -102,6 +103,9 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
     final slots = _slots(isPremium);
     final totalHeight = _totalHeight(isPremium);
 
+    final now = timeAsync.valueOrNull;
+    final currentTimeMinutes = now != null ? now.hour * 60 + now.minute : null;
+
     return Column(
       children: [
         const _DayHeader(),
@@ -126,6 +130,7 @@ class _TimelineWidgetState extends ConsumerState<TimelineWidget> {
                           isOnHour: slot.isOnHour,
                           label: slot.label,
                           isPremium: isPremium,
+                          currentTimeMinutes: currentTimeMinutes,
                           onDrop: (data, durationMinutes) {
                             if (!isPremium && blocks.length >= blockLimit) {
                               showPremiumGate(
@@ -279,11 +284,13 @@ class _DayHeader extends ConsumerWidget {
                     ? 'Today'
                     : DateFormat('EEE, MMM d').format(activeDay),
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: isToday ? AppColors.accent : null,
-                ),
+                style: isToday
+                    ? AppTypography.display(context).copyWith(
+                        color: AppColors.accent,
+                      )
+                    : AppTypography.bodyEmphasis(context).copyWith(
+                        fontSize: 18,
+                      ),
               ),
             ),
           ),
@@ -310,7 +317,7 @@ class _NavButton extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: Padding(
         padding: const EdgeInsets.all(4),
-        child: Icon(icon, size: 20, color: AppColors.textMuted),
+        child: Icon(icon, size: 22, color: AppColors.textMuted),
       ),
     );
   }

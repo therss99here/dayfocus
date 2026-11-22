@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../brain_dump/presentation/widgets/brain_dump_widget.dart';
 import '../../../priorities/presentation/widgets/priority_list.dart';
 import '../../../share/presentation/widgets/share_button.dart';
@@ -40,7 +41,7 @@ class _DesktopLayout extends StatelessWidget {
     return Row(
       children: [
         SizedBox(
-          width: AppSpacing.leftPanelWidth,
+          width: AppSpacing.leftPanelWidthScaled(context),
           child: Container(
             color: Theme.of(context).colorScheme.surfaceContainerLow,
             child: const _LeftPanel(),
@@ -63,14 +64,14 @@ class _LeftPanel extends StatelessWidget {
       children: [
         const _AppHeader(),
         const Divider(height: 1),
-        const _SectionLabel('TOP PRIORITIES'),
+        const _SectionLabel('TOP PRIORITIES', isDesktop: true),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           child: PriorityList(),
         ),
         const SizedBox(height: AppSpacing.sm),
         const Divider(height: 1),
-        const _SectionLabel('BRAIN DUMP'),
+        const _SectionLabel('BRAIN DUMP', isDesktop: true),
         const Expanded(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
@@ -110,18 +111,13 @@ class _BrainDumpExpansion extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExpansionTile(
       tilePadding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-      title: const Text(
+      title: Text(
         'BRAIN DUMP',
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
-          color: AppColors.textMuted,
-          letterSpacing: 1.4,
-        ),
+        style: AppTypography.sectionLabel(context),
       ),
       children: const [
         SizedBox(
-          height: 200,
+          height: 220,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
             child: BrainDumpWidget(),
@@ -138,14 +134,9 @@ class _PrioritiesExpansion extends StatelessWidget {
     return ExpansionTile(
       tilePadding:
           const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-      title: const Text(
+      title: Text(
         "TODAY'S PRIORITIES",
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
-          color: AppColors.textMuted,
-          letterSpacing: 1.4,
-        ),
+        style: AppTypography.sectionLabel(context),
       ),
       children: const [
         Padding(
@@ -175,21 +166,18 @@ class _AppHeader extends StatelessWidget {
             borderRadius: BorderRadius.circular(6),
             child: Image.asset(
               'assets/images/app_icon.png',
-              width: 24,
-              height: 24,
+              width: 26,
+              height: 26,
             ),
           ),
           const SizedBox(width: 8),
-          const Text(
-            'MyDayfocus',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.accent,
-              letterSpacing: -0.3,
+          Expanded(
+            child: Text(
+              'MyDayfocus',
+              style: AppTypography.appTitle(context),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          const Spacer(),
           const ShareButton(),
           const SizedBox(width: 8),
           GestureDetector(
@@ -198,7 +186,7 @@ class _AppHeader extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(4),
               child: Icon(Icons.settings_outlined,
-                  size: 17, color: AppColors.textMuted),
+                  size: 18, color: AppColors.textMuted),
             ),
           ),
         ],
@@ -208,23 +196,19 @@ class _AppHeader extends StatelessWidget {
 }
 
 class _SectionLabel extends StatelessWidget {
-  const _SectionLabel(this.label);
+  const _SectionLabel(this.label, {this.isDesktop = false});
   final String label;
+  final bool isDesktop;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        AppSpacing.sm, 12, AppSpacing.sm, 4,
+        AppSpacing.sm, 14, AppSpacing.sm, 6,
       ),
       child: Text(
         label,
-        style: const TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
-          color: AppColors.textMuted,
-          letterSpacing: 1.4,
-        ),
+        style: AppTypography.sectionLabel(context),
       ),
     );
   }

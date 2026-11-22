@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -39,11 +40,11 @@ class ShareCardWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'MyDayfocus',
-                    style: TextStyle(
+                    style: GoogleFonts.sora(
                       fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w700,
                       color: Colors.white,
                       letterSpacing: -0.3,
                     ),
@@ -51,8 +52,8 @@ class ShareCardWidget extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     date,
-                    style: TextStyle(
-                      fontSize: 13,
+                    style: GoogleFonts.sora(
+                      fontSize: 14,
                       color: Colors.white.withValues(alpha: 0.85),
                     ),
                   ),
@@ -96,7 +97,7 @@ class ShareCardWidget extends StatelessWidget {
                                 padding: const EdgeInsets.only(top: 4),
                                 child: Text(
                                   '+${summary.timeBlocks.length - 6} more',
-                                  style: const TextStyle(
+                                  style: GoogleFonts.sora(
                                     fontSize: 12,
                                     color: AppColors.textMuted,
                                   ),
@@ -119,9 +120,9 @@ class ShareCardWidget extends StatelessWidget {
                       size: 14,
                       color: AppColors.accent.withValues(alpha: 0.7)),
                   const SizedBox(width: 6),
-                  const Text(
+                  Text(
                     'Made with MyDayfocus',
-                    style: TextStyle(
+                    style: GoogleFonts.sora(
                       fontSize: 12,
                       color: AppColors.textMuted,
                       fontWeight: FontWeight.w500,
@@ -149,11 +150,11 @@ class _EmptyState extends StatelessWidget {
           Icon(Icons.sunny,
               size: 48, color: AppColors.accent.withValues(alpha: 0.5)),
           const SizedBox(height: AppSpacing.sm),
-          const Text(
+          Text(
             'Planning starts here',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+            style: GoogleFonts.sora(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
               color: AppColors.textPrimary,
             ),
           ),
@@ -171,11 +172,11 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       label,
-      style: const TextStyle(
-        fontSize: 11,
+      style: GoogleFonts.sora(
+        fontSize: 12,
         fontWeight: FontWeight.w700,
         color: AppColors.textMuted,
-        letterSpacing: 1.2,
+        letterSpacing: 1.5,
       ),
     );
   }
@@ -201,8 +202,8 @@ class _PriorityRow extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: TextStyle(
-                fontSize: 14,
+              style: GoogleFonts.sora(
+                fontSize: 15,
                 color: isDone
                     ? AppColors.textPrimary
                     : AppColors.textMuted,
@@ -246,18 +247,18 @@ class _BlockRow extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             time,
-            style: const TextStyle(
+            style: GoogleFonts.sora(
               fontSize: 12,
               color: AppColors.textMuted,
-              fontFamily: 'monospace',
+              fontFeatures: const [FontFeature.tabularFigures()],
             ),
           ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(
-                fontSize: 14,
+              style: GoogleFonts.sora(
+                fontSize: 15,
                 color: AppColors.textPrimary,
               ),
               maxLines: 1,
@@ -284,7 +285,7 @@ class _SummaryLine extends StatelessWidget {
 
     return Text(
       '${summary.completedBlocks}/${summary.totalBlocks} completed · $duration planned',
-      style: const TextStyle(
+      style: GoogleFonts.sora(
         fontSize: 13,
         color: AppColors.textMuted,
         fontWeight: FontWeight.w500,

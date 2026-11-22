@@ -1,3 +1,7 @@
+import 'package:flutter/widgets.dart';
+
+import 'device_scale.dart';
+
 class AppSpacing {
   AppSpacing._();
 
@@ -15,4 +19,16 @@ class AppSpacing {
   static const double slotHeight = 56;
   static const double timelineLabelWidth = 52;
   static const double leftPanelWidth = 240;
+
+  static double scaled(double value, BuildContext context) =>
+      value * DeviceScale.factor(context);
+
+  static double slotHeightScaled(BuildContext context) =>
+      slotHeight * DeviceScale.factor(context);
+
+  static double timelineLabelWidthScaled(BuildContext context) =>
+      timelineLabelWidth * DeviceScale.factor(context);
+
+  static double leftPanelWidthScaled(BuildContext context) =>
+      leftPanelWidth * DeviceScale.factor(context);
 }

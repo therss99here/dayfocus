@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../premium/domain/premium_limits.dart';
 import '../../../premium/presentation/providers/premium_provider.dart';
 import '../../../premium/presentation/widgets/premium_gate.dart';
@@ -134,14 +135,13 @@ class _AddPriorityFieldState extends ConsumerState<AddPriorityField> {
           padding: const EdgeInsets.only(top: 4),
           child: Row(
             children: [
-              const Icon(Icons.add, size: 14, color: AppColors.textMuted),
+              const Icon(Icons.add, size: 16, color: AppColors.textMuted),
               const SizedBox(width: 8),
               Expanded(
                 child: _pickingDuration
                     ? Text(
                         _pendingTitle,
-                        style: const TextStyle(
-                          fontSize: 13,
+                        style: AppTypography.input(context).copyWith(
                           fontWeight: FontWeight.w500,
                         ),
                         maxLines: 1,
@@ -150,12 +150,11 @@ class _AddPriorityFieldState extends ConsumerState<AddPriorityField> {
                     : TextField(
                         controller: _controller,
                         textInputAction: TextInputAction.done,
-                        style: const TextStyle(fontSize: 13),
-                        decoration: const InputDecoration(
+                        style: AppTypography.input(context),
+                        decoration: InputDecoration(
                           hintText: 'Add a priority...',
-                          hintStyle: TextStyle(
+                          hintStyle: AppTypography.input(context).copyWith(
                             color: AppColors.textMuted,
-                            fontSize: 13,
                           ),
                           border: InputBorder.none,
                           enabledBorder: InputBorder.none,
@@ -202,9 +201,7 @@ class _AddPriorityFieldState extends ConsumerState<AddPriorityField> {
                                 ),
                                 child: Text(
                                   _durationLabel(d),
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
+                                  style: AppTypography.label(context).copyWith(
                                     color: _selectedDuration == d
                                         ? Colors.white
                                         : AppColors.textMuted,
@@ -220,12 +217,12 @@ class _AddPriorityFieldState extends ConsumerState<AddPriorityField> {
                 const SizedBox(width: 4),
                 GestureDetector(
                   onTap: _skipDuration,
-                  child: const Padding(
-                    padding: EdgeInsets.all(4),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
                     child: Text(
                       'Skip',
-                      style: TextStyle(
-                        fontSize: 12,
+                      style: AppTypography.label(context).copyWith(
+                        fontWeight: FontWeight.w400,
                         color: AppColors.textMuted,
                       ),
                     ),

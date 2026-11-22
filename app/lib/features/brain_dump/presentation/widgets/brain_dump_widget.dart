@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../timeline/presentation/providers/active_day_provider.dart';
@@ -100,28 +101,28 @@ class _BrainDumpWidgetState extends ConsumerState<BrainDumpWidget> {
                   scrollable: true,
                   customStyles: DefaultStyles(
                     paragraph: DefaultTextBlockStyle(
-                      const TextStyle(fontSize: 13, height: 1.6),
+                      GoogleFonts.sora(fontSize: 15, height: 1.6),
                       HorizontalSpacing.zero,
                       const VerticalSpacing(0, 0),
                       const VerticalSpacing(0, 0),
                       null,
                     ),
                     h1: DefaultTextBlockStyle(
-                      const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, height: 1.4),
+                      GoogleFonts.sora(fontSize: 20, fontWeight: FontWeight.w700, height: 1.4),
                       HorizontalSpacing.zero,
                       const VerticalSpacing(8, 4),
                       const VerticalSpacing(0, 0),
                       null,
                     ),
                     h2: DefaultTextBlockStyle(
-                      const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, height: 1.4),
+                      GoogleFonts.sora(fontSize: 17, fontWeight: FontWeight.w600, height: 1.4),
                       HorizontalSpacing.zero,
                       const VerticalSpacing(6, 2),
                       const VerticalSpacing(0, 0),
                       null,
                     ),
                     placeHolder: DefaultTextBlockStyle(
-                      const TextStyle(fontSize: 13, height: 1.6, color: AppColors.textMuted),
+                      GoogleFonts.sora(fontSize: 15, height: 1.6, color: AppColors.textMuted),
                       HorizontalSpacing.zero,
                       const VerticalSpacing(0, 0),
                       const VerticalSpacing(0, 0),
@@ -185,7 +186,7 @@ class _BrainDumpToolbar extends StatelessWidget {
         headerStyleType: HeaderStyleType.buttons,
         iconTheme: QuillIconTheme(
           iconButtonSelectedData: IconButtonData(
-            iconSize: 16,
+            iconSize: 18,
             color: AppColors.accent,
             style: ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(AppColors.accentDim),
@@ -194,7 +195,7 @@ class _BrainDumpToolbar extends StatelessWidget {
             ),
           ),
           iconButtonUnselectedData: IconButtonData(
-            iconSize: 16,
+            iconSize: 18,
             color: AppColors.textMuted,
             style: const ButtonStyle(
               padding: WidgetStatePropertyAll(EdgeInsets.all(4)),

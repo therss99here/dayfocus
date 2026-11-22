@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/priority_drag_data.dart';
 import '../../../premium/domain/premium_limits.dart';
 
@@ -14,6 +15,7 @@ class TimeSlotRow extends StatefulWidget {
     required this.onDrop,
     required this.onCreate,
     required this.isPremium,
+    this.currentTimeMinutes,
   });
 
   final int hour;
@@ -23,6 +25,7 @@ class TimeSlotRow extends StatefulWidget {
   final void Function(PriorityDragData data, int durationMinutes) onDrop;
   final void Function(String title, int durationMinutes) onCreate;
   final bool isPremium;
+  final int? currentTimeMinutes;
 
   @override
   State<TimeSlotRow> createState() => _TimeSlotRowState();
@@ -109,7 +112,12 @@ class _TimeSlotRowState extends State<TimeSlotRow> {
                 height: AppSpacing.slotHeight,
                 child: Row(
                   children: [
-                    _TimeLabel(label: widget.label, isOnHour: widget.isOnHour),
+                    _TimeLabel(
+                      label: widget.label,
+                      isOnHour: widget.isOnHour,
+                      currentTimeMinutes: widget.currentTimeMinutes,
+                      slotMinutes: widget.hour * 60 + widget.minute,
+                    ),
                     Expanded(
                       child: GestureDetector(
                         behavior: HitTestBehavior.opaque,
@@ -134,13 +142,12 @@ class _TimeSlotRowState extends State<TimeSlotRow> {
                               ? TextField(
                                   controller: _controller,
                                   focusNode: _focusNode,
-                                  style: const TextStyle(fontSize: 13),
+                                  style: AppTypography.input(context),
                                   textInputAction: TextInputAction.done,
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     hintText: 'Block title...',
-                                    hintStyle: TextStyle(
+                                    hintStyle: AppTypography.input(context).copyWith(
                                       color: AppColors.textMuted,
-                                      fontSize: 13,
                                     ),
                                     border: InputBorder.none,
                                     enabledBorder: InputBorder.none,
@@ -154,8 +161,7 @@ class _TimeSlotRowState extends State<TimeSlotRow> {
                               : _pickingDuration
                                   ? Text(
                                       _pendingTitle,
-                                      style: const TextStyle(
-                                        fontSize: 13,
+                                      style: AppTypography.input(context).copyWith(
                                         fontWeight: FontWeight.w500,
                                       ),
                                       maxLines: 1,
@@ -238,9 +244,7 @@ class _DurationPicker extends StatelessWidget {
                             ),
                             child: Text(
                               _label(d),
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
+                              style: AppTypography.label(context).copyWith(
                                 color: selectedDuration == d
                                     ? Colors.white
                                     : AppColors.textMuted,
@@ -277,28 +281,35 @@ class _DurationPicker extends StatelessWidget {
 }
 
 class _TimeLabel extends StatelessWidget {
-  const _TimeLabel({required this.label, required this.isOnHour});
+  const _TimeLabel({
+    required this.label,
+    required this.isOnHour,
+    required this.currentTimeMinutes,
+    required this.slotMinutes,
+  });
 
   final String label;
   final bool isOnHour;
+  final int? currentTimeMinutes;
+  final int slotMinutes;
 
   @override
   Widget build(BuildContext context) {
+    final hideLabel = currentTimeMinutes != null &&
+        (currentTimeMinutes! - slotMinutes).abs() < 15;
+
     return SizedBox(
       width: AppSpacing.timelineLabelWidth,
       child: Padding(
         padding: const EdgeInsets.only(right: 8),
-        child: Text(
-          label,
-          textAlign: TextAlign.right,
-          style: TextStyle(
-            fontFamily: 'Courier',
-            fontSize: isOnHour ? 12 : 10,
-            fontWeight: isOnHour ? FontWeight.w500 : FontWeight.w400,
-            color: isOnHour
-                ? AppColors.textMuted
-                : AppColors.textMuted.withValues(alpha: 0.35),
-            letterSpacing: 0.2,
+        child: Opacity(
+          opacity: hideLabel ? 0.0 : 1.0,
+          child: Text(
+            label,
+            textAlign: TextAlign.right,
+            style: isOnHour
+                ? AppTypography.time(context)
+                : AppTypography.timeFaded(context),
           ),
         ),
       ),
