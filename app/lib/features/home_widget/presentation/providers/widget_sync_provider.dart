@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../priorities/domain/entities/priority_entity.dart';
@@ -13,7 +14,7 @@ part 'widget_sync_provider.g.dart';
 @riverpod
 class WidgetSync extends _$WidgetSync {
   @override
-  void build() {
+  Future<void> build() async {
     final activeDay = ref.watch(activeDayProvider);
     final now = DateTime.now();
     final isToday = activeDay.year == now.year &&
@@ -25,12 +26,16 @@ class WidgetSync extends _$WidgetSync {
     final blocks = ref.watch(timelineNotifierProvider).valueOrNull;
     if (priorities == null || blocks == null) return;
 
-    final summary = DaySummary(
-      date: activeDay,
-      priorities: priorities.cast<PriorityEntity>(),
-      timeBlocks: blocks.cast<TimeBlockEntity>(),
-    );
+    try {
+      final summary = DaySummary(
+        date: activeDay,
+        priorities: List<PriorityEntity>.from(priorities),
+        timeBlocks: List<TimeBlockEntity>.from(blocks),
+      );
 
-    WidgetDataService.syncToWidget(summary);
+      await WidgetDataService.syncToWidget(summary);
+    } catch (e) {
+      debugPrint('[WidgetSync] sync failed: $e');
+    }
   }
 }
