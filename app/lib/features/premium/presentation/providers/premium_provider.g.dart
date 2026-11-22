@@ -41,7 +41,7 @@ final premiumProductsProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef PremiumProductsRef = AutoDisposeFutureProviderRef<List<StoreProduct>>;
-String _$premiumNotifierHash() => r'c86f6f9fb94c113b76a07ee0ab43f88a6afc11c6';
+String _$premiumNotifierHash() => r'aed2976cbaac493f5834061a05e3f98077ebe14b';
 
 /// See also [PremiumNotifier].
 @ProviderFor(PremiumNotifier)

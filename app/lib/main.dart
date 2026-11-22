@@ -10,6 +10,8 @@ import 'core/providers/notification_providers.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/analytics/data/analytics_service.dart';
+import 'features/home_widget/data/widget_data_service.dart';
+import 'features/home_widget/presentation/providers/widget_sync_provider.dart';
 import 'features/analytics/data/review_service.dart';
 import 'features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'features/premium/data/premium_service.dart';
@@ -38,6 +40,12 @@ void main() async {
     await AnalyticsService.initialize();
   } catch (e) {
     debugPrint('[Main] AnalyticsService init failed: $e');
+  }
+
+  try {
+    await WidgetDataService.initialize();
+  } catch (e) {
+    debugPrint('[Main] WidgetDataService init failed: $e');
   }
 
   // Supabase is only initialised when credentials are present (env.json filled).
@@ -72,6 +80,7 @@ class _DayfocusAppState extends ConsumerState<DayfocusApp>
     with WidgetsBindingObserver {
   ProviderSubscription<AsyncValue<List>>? _blockSub;
   ProviderSubscription? _prioritySub;
+  ProviderSubscription? _widgetSub;
 
   @override
   void initState() {
@@ -89,6 +98,10 @@ class _DayfocusAppState extends ConsumerState<DayfocusApp>
         prioritiesNotifierProvider,
         (prev, next) => _checkAllPrioritiesDone(prev, next),
       );
+      _widgetSub = ref.listenManual(
+        widgetSyncProvider,
+        (_, __) {},
+      );
 
       // Initial sync on app launch (if signed in)
       if (AppConfig.isConfigured) {
@@ -104,6 +117,7 @@ class _DayfocusAppState extends ConsumerState<DayfocusApp>
       debugPrint('[Main] App resumed - triggering sync');
       AnalyticsService.trackAppOpened();
       ref.read(syncNotifierProvider.notifier).syncOnResume();
+      ref.invalidate(widgetSyncProvider);
     }
   }
 
@@ -137,6 +151,7 @@ class _DayfocusAppState extends ConsumerState<DayfocusApp>
     WidgetsBinding.instance.removeObserver(this);
     _blockSub?.close();
     _prioritySub?.close();
+    _widgetSub?.close();
     super.dispose();
   }
 
