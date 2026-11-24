@@ -43,13 +43,17 @@ struct WidgetData {
             lastUpdated = formatter.date(from: isoString)
         }
 
+        let rawTitle = defaults?.string(forKey: "next_block_title")
+        let rawTime = defaults?.string(forKey: "next_block_time")
+        let rawStatus = defaults?.string(forKey: "next_block_status")
+
         return WidgetData(
             completedPriorities: defaults?.integer(forKey: "completed_priorities") ?? 0,
             totalPriorities: defaults?.integer(forKey: "total_priorities") ?? 0,
             priorities: priorities,
-            nextBlockTitle: defaults?.string(forKey: "next_block_title"),
-            nextBlockTime: defaults?.string(forKey: "next_block_time"),
-            nextBlockStatus: defaults?.string(forKey: "next_block_status"),
+            nextBlockTitle: rawTitle?.isEmpty == true ? nil : rawTitle,
+            nextBlockTime: rawTime?.isEmpty == true ? nil : rawTime,
+            nextBlockStatus: rawStatus?.isEmpty == true ? nil : rawStatus,
             completedBlocks: defaults?.integer(forKey: "completed_blocks") ?? 0,
             totalBlocks: defaults?.integer(forKey: "total_blocks") ?? 0,
             lastUpdated: lastUpdated

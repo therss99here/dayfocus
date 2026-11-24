@@ -2,7 +2,7 @@ name: dayfocus
 description: "Focus on what matters. Plan your day with intention."
 publish_to: 'none'
 
-version: 1.4.13+1
+version: 1.4.17+1
 
 environment:
   sdk: ^3.9.2
@@ -53,7 +53,7 @@ dependencies:
   uuid: ^4.5.1
   url_launcher: ^6.2.5
   package_info_plus: ^8.0.0
-  flutter_quill: ^11.5.0
+  flutter_quill: ^11.6.0
 
   # Home screen widgets
   home_widget: ^0.6.0

@@ -33,11 +33,12 @@ class WidgetDataService {
         HomeWidget.saveWidgetData(
             'completed_priorities', summary.completedPriorities),
         HomeWidget.saveWidgetData('total_priorities', summary.totalPriorities),
-        HomeWidget.saveWidgetData('next_block_title', nextBlock?.title),
         HomeWidget.saveWidgetData(
-            'next_block_time', nextBlock != null ? _formatTime(nextBlock) : null),
+            'next_block_title', nextBlock?.title ?? ''),
         HomeWidget.saveWidgetData(
-            'next_block_status', nextBlock?.status.name),
+            'next_block_time', nextBlock != null ? _formatTime(nextBlock) : ''),
+        HomeWidget.saveWidgetData(
+            'next_block_status', nextBlock?.status.name ?? ''),
         HomeWidget.saveWidgetData('completed_blocks', summary.completedBlocks),
         HomeWidget.saveWidgetData('total_blocks', summary.totalBlocks),
         HomeWidget.saveWidgetData('last_updated', DateTime.now().toIso8601String()),
